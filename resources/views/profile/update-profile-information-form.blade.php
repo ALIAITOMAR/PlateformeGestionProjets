@@ -92,7 +92,7 @@
 
     <x-slot name="actions">
         <x-action-message class="me-3" on="saved">
-            {{ __('Enregistrée.') }}
+            {{ __('Mis à jour avec succés.') }}
         </x-action-message>
 
         <x-button wire:loading.attr="disabled" wire:target="photo">

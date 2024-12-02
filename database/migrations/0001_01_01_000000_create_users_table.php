@@ -22,7 +22,7 @@ return new class extends Migration
             $table->foreignId('current_team_id')->nullable();
             $table->string('profile_photo_path', 2048)->nullable();
             $table->string('role')->nullable();
-            //$table->nullableMorphs('userable');
+            $table->timestamp('last_seen_at')->nullable();
             $table->timestamps();
         });
 

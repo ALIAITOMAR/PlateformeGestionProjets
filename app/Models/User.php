@@ -78,9 +78,13 @@ class User extends Authenticatable
     public function enseignants() {
         return $this->hasOne(Enseignant::class, 'user_id', 'id');
     }
+
+    public function apprenants() {
+        return $this->hasOne(Apprenant::class, 'user_id', 'id');
+    }
     
     public function hasRole($role)
     {
-        return User::where('role', $role)->get();
+        return $this->role === $role;
     }
 }

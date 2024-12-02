@@ -10,18 +10,30 @@ class Apprenant extends Model
     use HasFactory;
 
     protected $fillable = [
+        'date_naissance',
         'niveau',
-        'groupe_id',
+        'branche',
+        'classe_id',
+        'enseignant_id',
     ];
 
-    public function user()
+    /*public function user()
     {
         return $this->morphOne(User::class, 'userable');
+    }*/
+
+    public function user() {
+        return $this->belongsTo(User::class,'user_id','id');
     }
 
-    public function groupe()
+    public function classe()
     {
-        return $this->belongsTo(Groupe::class);
+        return $this->belongsTo(Classe::class);
+    }
+
+    public function enseignant()
+    {
+        return $this->belongsTo(Enseignant::class);
     }
 
     public function livraisons()

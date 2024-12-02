@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class EnseignantManager extends Component
 {
@@ -17,6 +18,7 @@ class EnseignantManager extends Component
 
     public $search = '';
 
+    public $enseignantId;
     /**
      * The enseignant instance.
      *
@@ -32,18 +34,18 @@ class EnseignantManager extends Component
     public $state = [];
 
     /**
-     * Indicates if enseignant update is being confirmed.
-     *
-     * @var bool
-     */
-    public $confirmingEnseignantUpdate = false;
-
-    /**
      * Indicates if enseignant add is being confirmed.
      *
      * @var bool
      */
     public $confirmingEnseignantAdd = false;
+
+    /**
+     * Indicates if enseignant update is being confirmed.
+     *
+     * @var bool
+     */
+    public $confirmingEnseignantUpdate = false;
 
      /**
      * Indicates if enseignant deletion is being confirmed.
@@ -53,19 +55,16 @@ class EnseignantManager extends Component
     public $confirmingEnseignantDeletion = false;
 
      /**
-     * The ID of the enseignant being removed.
+     * The ID of the enseignant being deleted.
      *
-     * @var int|null
+     * @var int
      */
-    public $enseignantIdBeingRemoved = null;
+    public $enseignantIdBeingDeleted;
 
-    public $enseignantId, $cadre, $date_embauche, $date_affectation, $specialite, $etablissement, $cycle, $tel;
-    public $nom, $prenom, $email, $password;
 
-        /**
+    /**
      * Mount the component.
      *
-     * @param  mixed  $enseignant
      * @return void
      */
     public function mount()
@@ -74,6 +73,12 @@ class EnseignantManager extends Component
         $this->enseignant = Enseignant::all();
     }
 
+    /**
+     * Confirm that the given Enseignant should be added.
+     *
+     * @param  int  $enseignantId
+     * @return void
+     */
     public function confirmEnseignantAdd()
     {
         $this->resetErrorBag();
@@ -81,104 +86,58 @@ class EnseignantManager extends Component
         $this->reset('state');
     }
 
-    public function confirmEnseignantEdit($enseignantId)
+    /**
+     * Create a new Enseignant.
+     *
+     * @return void
+     */
+    public function createEnseignant()
     {
-        $this->resetErrorBag();
+        Validator::make($this->state, [
+            'nom' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/'],
+            'prenom' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/'],
+            'email' => ['required', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]+$/'],
+            'matricule' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z0-9]+$/'],
+            'cadre' => ['required', 'string', 'max:255'],
+            'date_embauche' => ['required', 'date'],
+            'date_affectation' => ['required', 'date'],
+            'specialite' => ['required', 'string', 'max:255'],
+            'etablissement' => ['required', 'string', 'max:255'],
+            'cycle' => ['required', 'string', 'max:255'],
+            'tel' => ['required', 'regex:#^(?:\+?212|0)([ \-_/]*)(\d[ \-_/]*){9}$#'],
+        ])->validate();
 
-        $enseignant = Enseignant::find($enseignantId);
-
-        /*$this->state = [
-            'id' => $enseignant->id,
-            'cadre' => $enseignant->cadre,
-            'date_embauche' => $enseignant->price,
-            'date_affectation' => $enseignant->active,
-            'specialite' => $enseignant->active,
-            'etablissement' => $enseignant->active,
-            'cycle' => $enseignant->active,
-            'tel' => $enseignant->active,
-        ];*/
-
-        $this->enseignantId = $enseignantId;
-        $this->nom = $enseignant->user->nom;
-        $this->prenom = $enseignant->user->prenom;
-        $this->email = $enseignant->user->email;
-        //$this->password = $enseignant->user->password;
-        $this->cadre = $enseignant->cadre;
-        $this->date_embauche = $enseignant->date_embauche;
-        $this->date_affectation = $enseignant->date_affectation;
-        $this->specialite = $enseignant->specialite;
-        $this->etablissement = $enseignant->etablissement;
-        $this->cycle = $enseignant->cycle;
-        $this->tel = $enseignant->tel;
-
-        $this->confirmingEnseignantUpdate = true;
-    }
-
-    public function store()
-    {
-        $this->validate([
-            'nom' => 'required|string|max:255',
-            'prenom' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required',
-            'cadre' => 'required|string|max:255',
-            'date_embauche' => 'required|date',
-            'date_affectation' => 'required|date',
-            'specialite' => 'required|string|max:255',
-            'etablissement' => 'required|string|max:255',
-            'cycle' => 'required|string|max:255',
-            'tel' => 'required|numeric',
-        ]);
-
-        // Start a database transaction
         DB::beginTransaction();
 
         try {
 
             $user = User::create([
-                'nom' => $this->nom,
-                'prenom' => $this->prenom,
-                'email' => $this->email,
-                'password' => Hash::make($this->password),
+                'nom' => $this->state['nom'],
+                'prenom' => $this->state['prenom'],
+                'email' => $this->state['email'],
+                'password' => Hash::make($this->state['password']),
+                'role' => 'enseignant',
             ]);
 
             $user->enseignants()->create([
-                'cadre' => $this->cadre,
-                'date_embauche' => $this->date_embauche,
-                'date_affectation' => $this->date_affectation,
-                'specialite' => $this->specialite,
-                'etablissement' => $this->etablissement,
-                'cycle' => $this->cycle,
-                'tel' => $this->tel,
+                'matricule' => $this->state['matricule'],
+                'cadre' => $this->state['cadre'],
+                'date_embauche' => $this->state['date_embauche'],
+                'date_affectation' => $this->state['date_affectation'],
+                'specialite' => $this->state['specialite'],
+                'etablissement' => $this->state['etablissement'],
+                'cycle' => $this->state['cycle'],
+                'tel' => $this->state['tel'],
             ]);
 
-            // Commit the transaction
             DB::commit();
 
         } catch (\Exception $e) {
-            // Rollback the transaction in case of an error
             DB::rollback();
-            session()->flash('error', 'An error occurred while creating the teacher.');
+            session()->flash('error', 'Une erreur s\'est produite lors de la création du enseignant.');
         }
-
-        /*$enseignant = Enseignant::create([$this->state]);
-
-        $enseignant->user()->create([
-            'name' => 'sdsdsd',
-            'email' => 'sdsd@gmail.com',
-            'password' => bcrypt('sdsds'),
-        ]);
-
-        /*auth()->user()->enseignant()->create([
-            'cadre' => $this->state['cadre'],
-            'date_embauche' => $this->state['date_embauche'],
-            'date_affectation' => $this->state['date_affectation'],
-            'specialite' => $this->state['specialite'],
-            'etablissement' => $this->state['etablissement'],
-            'cycle' => $this->state['cycle'],
-            'tel' => $this->state['tel'],
-        ]);*/
-
+        
         session()->flash('message', 'Enseignant a été ajouté avec succès.');
 
         $this->confirmingEnseignantAdd = false;
@@ -186,73 +145,117 @@ class EnseignantManager extends Component
         $this->reset('state');
     }
 
-    public function edit($enseignantId)
-    {
-        $enseignant = Enseignant::findOrFail($enseignantId);
-
-        $this->state = [
-            'id' => $enseignant->id,
-            'cadre' => $enseignant->cadre,
-            'date_embauche' => $enseignant->price,
-            'date_affectation' => $enseignant->active,
-            'specialite' => $enseignant->active,
-            'etablissement' => $enseignant->active,
-            'cycle' => $enseignant->active,
-            'tel' => $enseignant->active,
-        ];
-        $this->confirmingEnseignantUpdate = true;
-    }
-
-    public function update()
-    {
-        $validator = Validator::make($this->state, [
-            'cadre' => 'required|string|max:255',
-            'date_embauche' => 'required|date',
-            'date_affectation' => 'required|date',
-            'specialite' => 'required|string|max:255',
-            'etablissement' => 'required|string|max:255',
-            'cycle' => 'required|string|max:255',
-            'tel' => 'required|numeric',
-        ])->validate();
-
-        if ($this->state['id']) {
-            $enseignant = Enseignant::findOrFail($this->state['id']);
-            $enseignant->update([
-                'cadre' => $this->state['cadre'],
-                'date_embauche' => $this->state['date_embauche'],
-                'date_affectation' => $this->state['date_affectation'],
-                'specialite' => $this->state['specialite'],
-                'etablissement' => $this->state['etablissement'],
-                'cycle' => $this->state['cycle'],
-                'tel' => $this->state['tel']
-            ]);
-            session()->flash('message', 'Enseignant a été modifié avec succès.');
-            $this->confirmingEnseignantUpdate = false;
-            $this->reset('state');
-        }
-    }
-
     /**
-     * Confirm that the given enseignant should be removed.
+     * Confirm that the given Enseignant should be updated.
      *
      * @param  int  $enseignantId
      * @return void
      */
+    public function confirmEnseignantEdit($enseignantId)
+    {
+        $this->resetErrorBag();
 
+        $enseignant = Enseignant::find($enseignantId);
+
+        $this->state = [
+            'id' => $enseignant->id,
+            'nom' => $enseignant->user->nom,
+            'prenom' => $enseignant->user->prenom,
+            'email' => $enseignant->user->email,
+            'matricule' => $enseignant->matricule,
+            'cadre' => $enseignant->cadre,
+            'date_embauche' => $enseignant->date_embauche,
+            'date_affectation' => $enseignant->date_affectation,
+            'specialite' => $enseignant->specialite,
+            'etablissement' => $enseignant->etablissement,
+            'cycle' => $enseignant->cycle,
+            'tel' => $enseignant->tel,
+        ];
+
+        $this->confirmingEnseignantUpdate = true;
+    }
+    
+    /**
+     * Update the Enseignant.
+     *
+     * @return void
+     */
+    public function updateEnseignant()
+    {
+        Validator::make($this->state, [
+            'nom' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/'],
+            'prenom' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email,'.Enseignant::findOrFail($this->state['id'])->user->id],
+            'password' => ['string', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]+$/'],
+            'matricule' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z0-9]+$/'],
+            'cadre' => ['required', 'string', 'max:255'],
+            'date_embauche' => ['required', 'date'],
+            'date_affectation' => ['required', 'date'],
+            'specialite' => ['required', 'string', 'max:255'],
+            'etablissement' => ['required', 'string', 'max:255'],
+            'cycle' => ['required', 'string', 'max:255'],
+            'tel' => ['required', 'regex:#^(?:\+?212|0)([ \-_/]*)(\d[ \-_/]*){9}$#'],
+        ])->validate();
+
+        
+        if ($this->state['id']) {
+            
+            $enseignant = Enseignant::findOrFail($this->state['id']);
+
+            // Mettre à jour les champs User
+            $enseignant->user->nom = $this->state['nom'];
+            $enseignant->user->prenom = $this->state['prenom'];
+            $enseignant->user->email = $this->state['email'];
+            if(!empty($this->state['password'])) {
+                $enseignant->user->password = Hash::make($this->state['password']);
+            }
+
+            // Mettre à jour les champs Enseignant
+            $enseignant->matricule = $this->state['matricule'];
+            $enseignant->cadre = $this->state['cadre'];
+            $enseignant->date_embauche = $this->state['date_embauche'];
+            $enseignant->date_affectation = $this->state['date_affectation'];
+            $enseignant->specialite = $this->state['specialite'];
+            $enseignant->etablissement = $this->state['etablissement'];
+            $enseignant->cycle = $this->state['cycle'];
+            $enseignant->tel = $this->state['tel'];
+
+            // Enregistre les modifications apportées si des champs ont changé
+            if ($enseignant->user->isDirty() || $enseignant->isDirty()) {
+                $enseignant->user->save();
+                $enseignant->save();
+                session()->flash('message', 'Enseignant a été modifié avec succès.');
+                $this->confirmingEnseignantUpdate = false;
+                $this->reset('state');
+            }
+        }
+    }
+
+    /**
+     * Confirm that the given API token should be deleted.
+     *
+     * @param  int  $enseignantId
+     * @return void
+     */
     public function confirmEnseignantDeletion($enseignantId)
     {
         $this->confirmingEnseignantDeletion = true;
-        $this->enseignantIdBeingRemoved = $enseignantId;
+
+        $this->enseignantIdBeingDeleted = $enseignantId;
     }
 
-    public function deleteEnseignant($enseignantId)
+    /**
+     * Delete the Enseignant.
+     *
+     * @return void
+     */
+    public function deleteEnseignant()
     {
-        $enseignant = Enseignant::findOrFail($enseignantId);
+        $enseignant = Enseignant::findOrFail($this->enseignantIdBeingDeleted);
         $enseignant->user()->delete(); 
         $enseignant->delete();
         
         $this->confirmingEnseignantDeletion = false;
-        $this->enseignantIdBeingRemoved = null;
         session()->flash('message', 'Enseignant a été supprimé avec succès.');
     }
 
@@ -274,6 +277,7 @@ class EnseignantManager extends Component
                   ->orWhere('prenom', 'like', '%' . $this->search . '%')
                   ->orWhere('email', 'like', '%' . $this->search . '%');
         })
+        ->orWhere('matricule', 'like', '%' . $this->search . '%')
         ->orWhere('cadre', 'like', '%' . $this->search . '%')
         ->orWhere('date_embauche', 'like', '%' . $this->search . '%')
         ->orWhere('etablissement', 'like', '%' . $this->search . '%')

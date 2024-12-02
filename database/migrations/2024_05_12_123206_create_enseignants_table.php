@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('enseignants', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id'); // Foreign key column
+            $table->string('matricule')->unique();
+            $table->unsignedBigInteger('user_id');  // Foreign key column
             $table->string('cadre');
             $table->date('date_embauche');
             $table->date('date_affectation');

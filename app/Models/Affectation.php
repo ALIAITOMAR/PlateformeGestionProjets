@@ -27,8 +27,8 @@ class Affectation extends Model
         return $this->belongsTo(Enseignant::class);
     }
 
-    public function groupe()
+    public function classe()
     {
-        return $this->belongsTo(Groupe::class);
+        return $this->belongsTo(Classe::class);
     }
 }

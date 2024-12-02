@@ -10,6 +10,7 @@ class Enseignant extends Model
     use HasFactory;
 
     protected $fillable = [
+        'matricule',
         'cadre',
         'date_embauche',
         'date_affectation',
@@ -27,9 +28,19 @@ class Enseignant extends Model
     public function user() {
         return $this->belongsTo(User::class,'user_id','id');
     }
-
-    /*public function user()
+    
+    public function apprenants()
     {
-        return $this->hasOne(User::class);
-    }*/
+        return $this->hasMany(Apprenant::class);
+    }
+    
+    public function classes()
+    {
+        return $this->hasMany(Classe::class);
+    }
+
+    public function projets()
+    {
+        return $this->hasMany(Projet::class);
+    }
 }

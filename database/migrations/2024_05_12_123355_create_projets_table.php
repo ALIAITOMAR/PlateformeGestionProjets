@@ -13,12 +13,15 @@ return new class extends Migration
     {
         Schema::create('projets', function (Blueprint $table) {
             $table->id();
-            $table->year('annee');
-            $table->string('sujet');
+            $table->unsignedBigInteger('enseignant_id'); // Foreign key column
+            $table->string('titre');
             $table->text('description');
             $table->string('module');
-            $table->string('competence');
+            $table->json('competence');
+            $table->enum('etat', ['Affecté', 'Non Affecté', 'Clôturé']);
             $table->timestamps();
+            $table->foreign('enseignant_id')->references('id')->on('enseignants')->onDelete('cascade');
+
         });
     }
 

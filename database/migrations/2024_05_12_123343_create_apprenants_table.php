@@ -14,11 +14,13 @@ return new class extends Migration
         Schema::create('apprenants', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');   // Foreign key column
-            $table->unsignedBigInteger('groupe_id'); // Foreign key column
+            $table->unsignedBigInteger('classe_id'); // Foreign key column
+            $table->unsignedBigInteger('enseignant_id'); // Foreign key column
             $table->string('niveau');
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('groupe_id')->references('id')->on('groupes')->onDelete('cascade');
+            $table->foreign('classe_id')->references('id')->on('classes')->onDelete('cascade');
+            $table->foreign('enseignant_id')->references('id')->on('enseignants')->onDelete('cascade');
         });
     }
 

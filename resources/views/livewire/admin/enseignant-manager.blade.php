@@ -1,7 +1,16 @@
 <div class="p-6 relative overflow-x-auto shadow-md sm:rounded-lg">
-    <div class="flex mt-8 mr-2 ml-2 items-center justify-between flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-4 bg-white dark:bg-gray-900">
+
+    <div>
+        @if (session()->has('message'))
+            <div class="alert alert-success">
+                {{ session('message') }}
+            </div>
+        @endif
+    </div>
+
+    <div class="flex items-center justify-between flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-4 bg-white dark:bg-gray-900">
             {{-- Add Button Action --}}
-            <div class="ml-2">
+            <div class="relative">
                 <x-button wire:click="confirmEnseignantAdd" class="bg-indigo-700 hover:bg-indigo-900">
                     Ajouter Enseignant
                 </x-button>
@@ -41,7 +50,7 @@
             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                 
                 <td class="px-6 py-4">
-                    {{ $enseignant->id }}
+                    {{ $enseignant->matricule }}
                 </td>
                 <th scope="row" class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
                     <img class="w-10 h-10 rounded-full" src="{{$enseignant->user->profile_photo_url }}" alt="{{ Auth::user()->name }}">
@@ -54,9 +63,21 @@
                     {{ $enseignant->etablissement }}
                 </td>
                 <td class="px-6 py-4">
-                    <div class="flex items-center">
-                        <div class="h-2.5 w-2.5 rounded-full bg-green-500 me-2"></div> Online
+                    @if(Cache::has('user-enligne' . $enseignant->user->id))
+                    <div class="inline-flex items-center">
+                        <span class="inline-flex items-center bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">
+                            <span class="w-2 h-2 me-1 bg-green-500 rounded-full"></span>
+                            En ligne
+                        </span>
+                        @else
+
+                        <span class="inline-flex items-center bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300">
+                            <span class="w-2 h-2 me-1 bg-red-500 rounded-full"></span>
+                            Hors ligne
+                        </span>
+                        <span class="block text-xs px-2.5 text-gray-500 dark:text-neutral-500">{{ $enseignant->user->last_seen_at ? 'Actif il y a ' . \Carbon\Carbon::parse($enseignant->user->last_seen_at)->diffForHumans(null, true) : '' }}</span>
                     </div>
+                    @endif
                 </td>
                 <td class="px-6 py-4">
                     {{-- Edit Button Action --}}
@@ -97,75 +118,81 @@
         <x-slot name="content">
 
             {{-- User input --}}
-
             <div class="col-span-6 sm:col-span-4">
                 <x-label for="nom" value="{{ __('Nom') }}" />
-                <x-input id="nom" type="text" class="mt-1 block w-full" wire:model="nom" />
+                <x-input id="nom" type="text" class="mt-1 block w-full" wire:model="state.nom" />
                 <x-input-error for="nom" class="mt-2" />
             </div>
             <div class="col-span-6 sm:col-span-4 mt-4">
-                <x-label for="prenom" value="{{ __('Prenom') }}" />
-                <x-input id="prenom" type="text" class="mt-1 block w-full" wire:model="prenom" />
+                <x-label for="prenom" value="{{ __('Prénom') }}" />
+                <x-input id="prenom" type="text" class="mt-1 block w-full" wire:model="state.prenom" />
                 <x-input-error for="prenom" class="mt-2" />
             </div>
             <div class="col-span-6 sm:col-span-4 mt-4">
                 <x-label for="email" value="{{ __('E-mail') }}" />
-                <x-input id="email" type="email" class="mt-1 block w-full" wire:model="email" />
+                <x-input id="email" type="email" class="mt-1 block w-full" wire:model="state.email" />
                 <x-input-error for="email" class="mt-2" />
             </div>
             <div class="col-span-6 sm:col-span-4 mt-4">
                 <x-label for="password" value="{{ __('Mot de passe') }}" />
-                <x-input id="password" type="password" class="mt-1 block w-full" wire:model="password" />
+                <x-input id="password" type="password" class="mt-1 block w-full" wire:model="state.password" />
                 <x-input-error for="password" class="mt-2" />
             </div>
 
             {{-- Enseignant input --}}
             <div class="col-span-6 sm:col-span-4 mt-4">
+                <x-label for="matricule" value="{{ __('Matricule') }}" />
+                <x-input id="matricule" type="text" class="mt-1 block w-full" wire:model="state.matricule" />
+                <x-input-error for="matricule" class="mt-2" />
+            </div>
+            <div class="col-span-6 sm:col-span-4 mt-4">
                 <x-label for="cadre" value="{{ __('Cadre') }}" />
-                <x-input id="cadre" type="text" class="mt-1 block w-full" wire:model="cadre" />
+                <x-input id="cadre" type="text" class="mt-1 block w-full" wire:model="state.cadre" />
                 <x-input-error for="cadre" class="mt-2" />
             </div>
             <div class="col-span-6 sm:col-span-4 mt-4">
                 <x-label for="date_embauche" value="{{ __('Date Embauche') }}" />
-                <x-input id="date_embauche" type="date" class="mt-1 block w-full" wire:model="date_embauche" />
+                <x-input id="date_embauche" type="date" class="mt-1 block w-full" wire:model="state.date_embauche" />
                 <x-input-error for="date_embauche" class="mt-2" />
             </div>
             <div class="col-span-6 sm:col-span-4 mt-4">
-                <x-label for="date_affectation" value="{{ __('date_affectation') }}" />
-                <x-input id="date_affectation" type="date" class="mt-1 block w-full" wire:model="date_affectation" />
+                <x-label for="date_affectation" value="{{ __('Date Affectation') }}" />
+                <x-input id="date_affectation" type="date" class="mt-1 block w-full" wire:model="state.date_affectation" />
                 <x-input-error for="date_affectation" class="mt-2" />
             </div>
             <div class="col-span-6 sm:col-span-4 mt-4">
-                <x-label for="specialite" value="{{ __('Specialite') }}" />
-                <x-input id="specialite" type="text" class="mt-1 block w-full" wire:model="specialite" />
+                <x-label for="specialite" value="{{ __('Specialité') }}" />
+                <x-input id="specialite" type="text" class="mt-1 block w-full" wire:model="state.specialite" />
                 <x-input-error for="specialite" class="mt-2" />
             </div>
             <div class="col-span-6 sm:col-span-4 mt-4">
                 <x-label for="etablissement" value="{{ __('Etablissement') }}" />
-                <x-input id="etablissement" type="text" class="mt-1 block w-full" wire:model="etablissement" />
+                <x-input id="etablissement" type="text" class="mt-1 block w-full" wire:model="state.etablissement" />
                 <x-input-error for="etablissement" class="mt-2" />
             </div>
             <div class="col-span-6 sm:col-span-4 mt-4">
                 <x-label for="cycle" value="{{ __('Cycle') }}" />
-                <x-input id="cycle" type="text" class="mt-1 block w-full" wire:model="cycle" />
+                <x-input id="cycle" type="text" class="mt-1 block w-full" wire:model="state.cycle" />
                 <x-input-error for="cycle" class="mt-2" />
             </div>
             <div class="col-span-6 sm:col-span-4 mt-4">
-                <x-label for="tel" value="{{ __('Tel') }}" />
-                <x-input id="tel" type="text" class="mt-1 block w-full" wire:model="tel" />
+                <x-label for="tel" value="{{ __('Téléphone') }}" />
+                <x-input id="tel" type="text" class="mt-1 block w-full" wire:model="state.tel" />
                 <x-input-error for="tel" class="mt-2" />
             </div>
         
         </x-slot>
         <x-slot name="footer">
             <x-secondary-button wire:click="$set('confirmingEnseignantAdd', false)" wire:loading.attr="disabled">
+                <svg class="me-1 -ms-1 w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
+                </svg>
                 {{ __('Annuler') }}
             </x-secondary-button>
-
-            <x-danger-button class="ml-2" wire:click="store()" wire:loading.attr="disabled">
-            <svg class="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>    
-            {{ __('Enregister') }}
-            </x-danger-button>
+            <x-button class="ml-2" wire:click="createEnseignant" wire:loading.attr="disabled">
+                <svg class="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>    
+                {{ __('Enregister') }}
+            </x-button>
         </x-slot>
     </x-dialog-modal>
 
@@ -179,59 +206,64 @@
             {{-- User input --}}
             <div class="col-span-6 sm:col-span-4">
                 <x-label for="nom" value="{{ __('Nom') }}" />
-                <x-input id="nom" type="text" class="mt-1 block w-full" wire:model="nom" />
+                <x-input id="nom" type="text" class="mt-1 block w-full" wire:model="state.nom" />
                 <x-input-error for="nom" class="mt-2" />
             </div>
             <div class="col-span-6 sm:col-span-4 mt-4">
                 <x-label for="prenom" value="{{ __('Prenom') }}" />
-                <x-input id="prenom" type="text" class="mt-1 block w-full" wire:model="prenom" />
+                <x-input id="prenom" type="text" class="mt-1 block w-full" wire:model="state.prenom" />
                 <x-input-error for="prenom" class="mt-2" />
             </div>
             <div class="col-span-6 sm:col-span-4 mt-4">
                 <x-label for="email" value="{{ __('E-mail') }}" />
-                <x-input id="email" type="email" class="mt-1 block w-full" wire:model="email" />
+                <x-input id="email" type="email" class="mt-1 block w-full" wire:model="state.email" />
                 <x-input-error for="email" class="mt-2" />
             </div>
             <div class="col-span-6 sm:col-span-4 mt-4">
                 <x-label for="password" value="{{ __('Mot de passe') }}" />
-                <x-input id="password" type="password" class="mt-1 block w-full" wire:model="password" />
+                <x-input id="password" type="password" class="mt-1 block w-full" wire:model="state.password" />
                 <x-input-error for="password" class="mt-2" />
             </div>
 
             {{-- Enseignant input --}}
             <div class="col-span-6 sm:col-span-4 mt-4">
+                <x-label for="matricule" value="{{ __('Matricule') }}" />
+                <x-input id="matricule" type="text" class="mt-1 block w-full" wire:model="state.matricule" />
+                <x-input-error for="matricule" class="mt-2" />
+            </div>
+            <div class="col-span-6 sm:col-span-4 mt-4">
                 <x-label for="cadre" value="{{ __('Cadre') }}" />
-                <x-input id="cadre" type="text" class="mt-1 block w-full" wire:model="cadre" />
+                <x-input id="cadre" type="text" class="mt-1 block w-full" wire:model="state.cadre" />
                 <x-input-error for="cadre" class="mt-2" />
             </div>
             <div class="col-span-6 sm:col-span-4 mt-4">
                 <x-label for="date_embauche" value="{{ __('Date Embauche') }}" />
-                <x-input id="date_embauche" type="date" class="mt-1 block w-full" wire:model="date_embauche" />
+                <x-input id="date_embauche" type="date" class="mt-1 block w-full" wire:model="state.date_embauche" />
                 <x-input-error for="date_embauche" class="mt-2" />
             </div>
             <div class="col-span-6 sm:col-span-4 mt-4">
                 <x-label for="date_affectation" value="{{ __('date_affectation') }}" />
-                <x-input id="date_affectation" type="date" class="mt-1 block w-full" wire:model="date_affectation" />
+                <x-input id="date_affectation" type="date" class="mt-1 block w-full" wire:model="state.date_affectation" />
                 <x-input-error for="date_affectation" class="mt-2" />
             </div>
             <div class="col-span-6 sm:col-span-4 mt-4">
                 <x-label for="specialite" value="{{ __('Specialite') }}" />
-                <x-input id="specialite" type="text" class="mt-1 block w-full" wire:model="specialite" />
+                <x-input id="specialite" type="text" class="mt-1 block w-full" wire:model="state.specialite" />
                 <x-input-error for="specialite" class="mt-2" />
             </div>
             <div class="col-span-6 sm:col-span-4 mt-4">
                 <x-label for="etablissement" value="{{ __('Etablissement') }}" />
-                <x-input id="etablissement" type="text" class="mt-1 block w-full" wire:model="etablissement" />
+                <x-input id="etablissement" type="text" class="mt-1 block w-full" wire:model="state.etablissement" />
                 <x-input-error for="etablissement" class="mt-2" />
             </div>
             <div class="col-span-6 sm:col-span-4 mt-4">
                 <x-label for="cycle" value="{{ __('Cycle') }}" />
-                <x-input id="cycle" type="text" class="mt-1 block w-full" wire:model="cycle" />
+                <x-input id="cycle" type="text" class="mt-1 block w-full" wire:model="state.cycle" />
                 <x-input-error for="cycle" class="mt-2" />
             </div>
             <div class="col-span-6 sm:col-span-4 mt-4">
                 <x-label for="tel" value="{{ __('Tel') }}" />
-                <x-input id="tel" type="text" class="mt-1 block w-full" wire:model="tel" />
+                <x-input id="tel" type="text" class="mt-1 block w-full" wire:model="state.tel" />
                 <x-input-error for="tel" class="mt-2" />
             </div>
         
@@ -241,14 +273,15 @@
             <x-secondary-button wire:click="$set('confirmingEnseignantUpdate', false)" wire:loading.attr="disabled">
                 {{ __('Annuler') }}
             </x-secondary-button>
-            <x-danger-button class="ml-2" wire:click="update()" wire:loading.attr="disabled">
+            <x-button class="ml-2" wire:click="updateEnseignant" wire:loading.attr="disabled">
             <svg class="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>    
             {{ __('Enregistrer') }}
-            </x-danger-button>
+            </x-button>
         </x-slot>
     </x-dialog-modal>
 
-    <x-confirmation-modal wire:model="confirmingEnseignantDeletion">
+    <!-- Supprimer Enseignant Confirmation Modal -->
+    <x-confirmation-modal wire:model.live="confirmingEnseignantDeletion">
         <x-slot name="title">
             {{ __('Supprimer Enseignant') }}
         </x-slot>
@@ -256,15 +289,13 @@
             {{ __('Etes-vous sûr de vouloir supprimer Enseignant ?') }}
         </x-slot>
         <x-slot name="footer">
-            <x-secondary-button wire:click="$set('confirmingEnseignantDeletion', false)" wire:loading.attr="disabled">
+            <x-secondary-button wire:click="$toggle('confirmingEnseignantDeletion')" wire:loading.attr="disabled">
                 {{ __('Annuler') }}
             </x-secondary-button>
-            <x-danger-button class="ml-2" wire:click="deleteEnseignant({{ $enseignantIdBeingRemoved }})"
-                wire:loading.attr="disabled">
+            <x-danger-button class="ml-2" wire:click="deleteEnseignant" wire:loading.attr="disabled">
                 {{ __('Supprimer') }}
             </x-danger-button>
         </x-slot>
     </x-confirmation-modal>
 
 </div>
-

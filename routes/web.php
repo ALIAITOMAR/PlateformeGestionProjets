@@ -20,3 +20,16 @@ Route::middleware([
 Route::middleware(['auth:sanctum', 'verified'])->get('/admin/enseignants', function () {
     return view('enseignants');
 })->name('enseignants');
+
+
+Route::middleware(['auth:sanctum', 'verified'])->get('/apprenants', function () {
+    return view('apprenants');
+})->name('apprenants');
+
+Route::middleware(['auth:sanctum', 'verified'])->get('/classes', function () {
+    return view('classes');
+})->name('classes');
+
+Route::middleware(['auth:sanctum', 'verified'])->get('/projets', function () {
+    return view('projets');
+})->name('projets');

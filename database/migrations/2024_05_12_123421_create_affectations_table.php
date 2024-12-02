@@ -16,11 +16,11 @@ return new class extends Migration
             $table->date('date_affectation');
             $table->date('date_fin');
             $table->unsignedBigInteger('enseignant_id'); // Foreign key column
-            $table->unsignedBigInteger('groupe_id');     // Foreign key column
+            $table->unsignedBigInteger('classe_id');     // Foreign key column
             $table->unsignedBigInteger('projet_id');     // Foreign key column
             $table->timestamps();
             $table->foreign('enseignant_id')->references('id')->on('enseignants')->onDelete('cascade');
-            $table->foreign('groupe_id')->references('id')->on('groupes')->onDelete('cascade');
+            $table->foreign('classe_id')->references('id')->on('classes')->onDelete('cascade');
             $table->foreign('projet_id')->references('id')->on('projets')->onDelete('cascade');
         });
     }

@@ -10,13 +10,19 @@ class Projet extends Model
     use HasFactory;
 
     protected $fillable = [
-        'annee',
-        'sujet',
+        'enseignant_id',
+        'titre',
+        'description',
         'module',
         'competence',
-        'description',
+        'etat',
     ];
 
+    public function enseignant()
+    {
+        return $this->belongsTo(Enseignant::class);
+    }
+    
     public function affectations()
     {
         return $this->hasMany(Affectation::class);
