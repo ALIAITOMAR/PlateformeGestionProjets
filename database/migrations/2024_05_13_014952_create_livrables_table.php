@@ -16,10 +16,10 @@ return new class extends Migration
             $table->unsignedBigInteger('projet_id');    // Foreign key column
             $table->unsignedBigInteger('apprenant_id'); // Foreign key column
             $table->string('chemin_fichier');
-            $table->enum('etat', ['rendu', 'Non rendu', 'rendu en retard']);
-            $table->float('note_produit', 8, 2)->default(0);;
-            $table->float('note_propos', 8, 2);
-            $table->float('note_processus', 8, 2);
+            $table->enum('etat', ['Non rendu', 'rendu', 'rendu en retard'])->default('Non rendu');
+            $table->float('note_produit', 8, 2)->nullable();
+            $table->float('note_propos', 8, 2)->nullable();
+            $table->float('note_processus', 8, 2)->nullable();
             $table->string('commentaires')->nullable();
             $table->timestamps();
             $table->foreign('projet_id')->references('id')->on('projets')->onDelete('cascade');

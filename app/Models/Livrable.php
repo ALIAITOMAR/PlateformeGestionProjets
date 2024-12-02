@@ -28,4 +28,9 @@ class Livrable extends Model
     {
         return $this->belongsTo(Apprenant::class);
     }
+
+    public function affectation()
+    {
+        return $this->belongsTo(Affectation::class);
+    }
 }

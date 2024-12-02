@@ -27,4 +27,10 @@ class Classe extends Model
     {
         return $this->hasMany(Affectation::class);
     }
+
+    public function livrables()
+    {
+        return $this->hasMany(Livrable::class);
+    }
+
 }

@@ -40,9 +40,14 @@ class ProjetManager extends Component
         'description' => null,
         'module' => null,
         'competence' => null,
-        'etat' => null,
         'taches' => [
             ['titre' => '', 'description' => '']
+        ],
+        'questions' => [
+            ['titre' => '']
+        ],
+        'criteres' => [
+            ['libelle' => '']
         ]
     ];
 
@@ -87,6 +92,7 @@ class ProjetManager extends Component
         $this->projet = Projet::all();
     }
 
+    
     public function addTache()
     {
         $this->state['taches'][] = ['titre' => '', 'description' => ''];
@@ -96,6 +102,39 @@ class ProjetManager extends Component
     {
         unset($this->state['taches'][$index]);
         $this->state['taches'] = array_values($this->state['taches']);
+    }
+
+    public function addQuestion()
+    {
+        $this->state['questions'][] = ['titre' => ''];
+    }
+
+    public function removeQuestion($index)
+    {
+        unset($this->state['questions'][$index]);
+        $this->state['questions'] = array_values($this->state['questions']);
+    }
+
+    public function addCritere()
+    {
+        $this->state['criteres'][] = ['libelle' => ''];
+    }
+
+    public function removeCritere($index)
+    {
+        unset($this->state['criteres'][$index]);
+        $this->state['criteres'] = array_values($this->state['criteres']);
+    }
+
+    public function addField($field)
+    {
+        $this->state[$field][] = [];
+    }
+
+    public function removeField($field, $index)
+    {
+        unset($this->state[$field][$index]);
+        $this->state[$field] = array_values($this->state[$field]);
     }
 
     /**
@@ -122,28 +161,27 @@ class ProjetManager extends Component
             'titre' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string', 'max:255'],
             'module' => ['required', 'string', 'max:255'],
-            'competence' => ['required', 'string', 'max:255'],
-            'etat' => ['required'],
+            'competence' => ['required', 'string', 'max:255', 'regex:/^[\w\s,]+$/'],
             'taches.*.titre' => ['required', 'string', 'max:255'],
             'taches.*.description' => ['required', 'string', 'max:255'],
+            'criteres.*.libelle' => ['required', 'string', 'max:255'],
+            'questions.*.titre' => ['required', 'string', 'max:255'],
         ])->validate();
 
         DB::beginTransaction();
 
         try {
-         
+        
             $projet = auth()->user()->enseignants->projets()->create([
                 'titre' => $this->state['titre'],
                 'description' => $this->state['description'],
                 'module' => $this->state['module'],
                 'competence' => json_encode(explode(',', $this->state['competence'])),
-                'etat' => $this->state['etat'],
             ]);
-
             
-            foreach ($this->state['taches'] as $tache) {
-                $projet->taches()->create($tache);
-            }
+            $projet->taches()->createMany($this->state['taches']);
+            $projet->criteres()->createMany($this->state['criteres']);
+            $projet->questions()->createMany($this->state['questions']);
 
             DB::commit();
 
@@ -178,8 +216,9 @@ class ProjetManager extends Component
             'description' => $projet->description,
             'module' => $projet->module,
             'competence' => json_decode($projet->competence, true),
-            'etat' => $projet->etat,
             'taches' => $projet->taches->toArray(),
+            'criteres' => $projet->criteres->toArray(),
+            'questions' => $projet->questions->toArray(),
         ];
 
         $this->confirmingProjetUpdate = true;
@@ -196,10 +235,11 @@ class ProjetManager extends Component
             'titre' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string', 'max:255'],
             'module' => ['required', 'string', 'max:255'],
-            'competence' => ['required', 'string', 'max:255'],
-            'etat' => ['required'],
+            'competence' => ['required', 'string', 'regex:/^[\w\s,]+$/'],
             'taches.*.titre' => ['required', 'string', 'max:255'],
             'taches.*.description' => ['required', 'string', 'max:255'],
+            'criteres.*.libelle' => ['required', 'string', 'max:255'],
+            'questions.*.titre' => ['required', 'string', 'max:255'],
         ])->validate();
 
         
@@ -211,9 +251,7 @@ class ProjetManager extends Component
             $projet->titre = $this->state['titre'];
             $projet->description = $this->state['description'];
             $projet->module = $this->state['module'];
-            $projet->competence =  json_encode(explode(',', $this->state['competence']));
-            $projet->etat = $this->state['etat'];
-
+            $projet->competence = $this->state['competence'] ? explode(',', $this->state['competence']) : null;
             // Mettre à jour les champs Tache
             $tacheIds = collect($this->state['taches'])->pluck('id')->filter()->toArray();
             $projet->taches()->whereNotIn('id', $tacheIds)->delete();
@@ -221,14 +259,23 @@ class ProjetManager extends Component
             collect($this->state['taches'])->each(function ($tache) use ($projet) {
                 $projet->taches()->updateOrCreate(['id' => $tache['id'] ?? null], $tache);
             });
-            
-            //$projet->taches()->delete();
-            //$projet->taches()->createMany($this->state['taches']);
-
-            // Mettre à jour les champs Question
 
             // Mettre à jour les champs Critere
-             
+            $critereIds = collect($this->state['criteres'])->pluck('id')->filter()->toArray();
+            $projet->criteres()->whereNotIn('id', $critereIds)->delete();
+
+            collect($this->state['criteres'])->each(function ($critere) use ($projet) {
+                $projet->criteres()->updateOrCreate(['id' => $critere['id'] ?? null], $critere);
+            });
+
+            // Mettre à jour les champs Question
+            $questionIds = collect($this->state['questions'])->pluck('id')->filter()->toArray();
+            $projet->questions()->whereNotIn('id', $questionIds)->delete();
+
+            collect($this->state['questions'])->each(function ($question) use ($projet) {
+                $projet->questions()->updateOrCreate(['id' => $question['id'] ?? null], $question);
+            });
+
             $projet->save();
 
             session()->flash('message', 'Projet a été modifié avec succès.');
@@ -278,9 +325,9 @@ class ProjetManager extends Component
     {
         $projets = auth()->user()->enseignants->projets()
         ->where('titre', 'like', '%'.$this->search.'%')
-        ->where('description', 'like', '%'.$this->search.'%')
-        ->where('module', 'like', '%'.$this->search.'%')
-        ->where('competence', 'like', '%'.$this->search.'%')
+        ->orWhere('description', 'like', '%'.$this->search.'%')
+        ->orWhere('module', 'like', '%'.$this->search.'%')
+        ->orWhere('competence', 'like', '%'.$this->search.'%')
         ->orderBy('id','ASC')
         ->paginate(5);
 

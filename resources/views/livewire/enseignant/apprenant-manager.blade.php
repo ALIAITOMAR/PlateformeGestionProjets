@@ -22,14 +22,14 @@
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
                 </svg>
             </div>
-            <input type="search" wire:model="search" id="table-search-apprenants" class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Rechercher des apprenants">
+            <input type="search" wire:model.live="search" id="table-search-apprenants" class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Rechercher des apprenants">
         </div>
     </div>
     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
                 <th scope="col" class="px-6 py-3">
-                    ID
+                    CNE
                 </th>
                 <th scope="col" class="px-6 py-3">
                     User
@@ -50,7 +50,7 @@
             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                 
                 <td class="px-6 py-4">
-                    {{ $apprenant->id }}
+                    {{ $apprenant->cne }}
                 </td>
                 <th scope="row" class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
                     <img class="w-10 h-10 rounded-full" src="{{$apprenant->user->profile_photo_url }}" alt="{{ Auth::user()->name }}">
@@ -126,6 +126,16 @@
             </div>
 
             {{-- Apprenant input --}}
+            <div class="col-span-6 sm:col-span-4">
+                <x-label for="cne" value="{{ __('CNE') }}" />
+                <x-input id="cne" type="text" class="mt-1 block w-full" wire:model="state.cne" />
+                <x-input-error for="cne" class="mt-2" />
+            </div>
+            <div class="col-span-6 sm:col-span-4 mt-4">
+                <x-label for="date_naissance" value="{{ __('Date Naissance') }}" />
+                <x-input id="date_naissance" type="date" class="mt-1 block w-full" wire:model="state.date_naissance" />
+                <x-input-error for="date_naissance" class="mt-2" />
+            </div>
             <div class="col-span-6 sm:col-span-4 mt-4">
                 <x-label for="niveau" value="{{ __('Niveau') }}" />
                 <x-input id="niveau" type="text" class="mt-1 block w-full" wire:model="state.niveau" />
@@ -185,6 +195,16 @@
             </div>
 
             {{-- Apprenant input --}}
+            <div class="col-span-6 sm:col-span-4">
+                <x-label for="cne" value="{{ __('CNE') }}" />
+                <x-input id="cne" type="text" class="mt-1 block w-full" wire:model="state.cne" />
+                <x-input-error for="cne" class="mt-2" />
+            </div>
+            <div class="col-span-6 sm:col-span-4 mt-4">
+                <x-label for="date_naissance" value="{{ __('Date Naissance') }}" />
+                <x-input id="date_naissance" type="date" class="mt-1 block w-full" wire:model="state.date_naissance" />
+                <x-input-error for="date_naissance" class="mt-2" />
+            </div>
             <div class="col-span-6 sm:col-span-4 mt-4">
                 <x-label for="niveau" value="{{ __('Niveau') }}" />
                 <x-input id="niveau" type="text" class="mt-1 block w-full" wire:model="state.niveau" />

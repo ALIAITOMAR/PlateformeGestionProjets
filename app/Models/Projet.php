@@ -43,8 +43,13 @@ class Projet extends Model
         return $this->hasMany(Critere::class);
     }
 
-    public function livraisons()
+    public function livrables()
     {
         return $this->hasMany(Livrable::class);
+    }
+
+    public function classe()
+    {
+        return $this->belongsTo(Classe::class);
     }
 }

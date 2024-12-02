@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Hash;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
 
 class ClasseManager extends Component
 {
@@ -94,12 +95,16 @@ class ClasseManager extends Component
      */
     public function createClasse()
     {
+        $enseignant_id = auth()->user()->enseignants->id;
+
+        // 'regex:/^[a-zA-Z0-9\s\-_]+$/'
+
         Validator::make($this->state, [
-            'nom' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z0-9\s\-_]+$/'],
+            'nom' => ['required', 'string', 'max:255', 'regex:/^[^\s]+(\s*[^\s]+)*$/', Rule::unique('classes')->where(function ($query) { return $query->where('enseignant_id', auth()->user()->enseignants->id); })],
         ])->validate();
 
         auth()->user()->enseignants->classes()->create([
-            'nom' => $this->state['nom'],
+            'nom' => trim($this->state['nom']),
         ]);
 
         session()->flash('message', 'Classe a été ajouté avec succès.');

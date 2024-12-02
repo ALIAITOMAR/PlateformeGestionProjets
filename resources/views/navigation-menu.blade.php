@@ -50,11 +50,11 @@
                                 <x-dropdown-link href="{{ route('projets') }}" :active="request()->routeIs('projets')">
                                     {{ __('Gestion des Projets') }}
                                 </x-dropdown-link>
-                                <x-dropdown-link href="{{ route('profile.show') }}">
+                                <x-dropdown-link href="{{ route('affectations') }}" :active="request()->routeIs('affectations')">
                                     {{ __('Affectation Projets') }}
                                 </x-dropdown-link>
-                                <x-dropdown-link href="{{ route('profile.show') }}">
-                                    {{ __('Produit Livrable') }}
+                                <x-dropdown-link href="{{ route('livrables') }}" :active="request()->routeIs('livrables')">
+                                    {{ __('Gestion des livrables') }}
                                 </x-dropdown-link>
                                 <x-dropdown-link href="{{ route('profile.show') }}">
                                     {{ __('Evaluation') }}
@@ -64,6 +64,14 @@
                     </div>
                     @endif
 
+                    @if(auth()->user()->hasRole('apprenant'))
+                    <x-nav-link href="{{ route('projets') }}" :active="request()->routeIs('classes')">
+                        {{ __('Projets attribués') }}
+                    </x-nav-link>
+                    <x-nav-link href="{{ route('projets') }}" :active="request()->routeIs('classes')">
+                        {{ __('Mes Livrables') }}
+                    </x-nav-link>
+                    @endif
                 </div>
             </div>
 

@@ -22,7 +22,7 @@
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
                 </svg>
             </div>
-            <input type="search" wire:model="search" id="table-search-projets" class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Rechercher des projets">
+            <input type="search" wire:model.live="search" id="table-search-projets" class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Rechercher des projets">
         </div>
     </div>
     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -58,7 +58,7 @@
                 </td>
 
                 <td class="px-6 py-4">
-                    {{ $projet->created_at->format('d-m-Y') }}
+                    {{ $projet->created_at->format('d/m/Y') }}
                 </td>
 
                 
@@ -145,7 +145,7 @@
 
             {{-- Projet input --}}
             <div class="col-span-6 sm:col-span-4">
-                <x-label for="titre" value="{{ __('titre') }}" />
+                <x-label for="titre" value="{{ __('Titre') }}" />
                 <x-input id="titre" type="text" class="mt-1 block w-full" wire:model="state.titre" />
                 <x-input-error for="titre" class="mt-2" />
             </div>
@@ -166,47 +166,98 @@
                 <x-label for="competence" value="{{ __('Competence (Séparées par des virgules)') }}" />
                 <x-input id="competence" type="text" class="mt-1 block w-full" wire:model="state.competence" />
                 <x-input-error for="competence" class="mt-2" />
+                
             </div>
 
             <div class="col-span-6 sm:col-span-4 mt-4">
-
                 <x-label for="" value="{{ __('Liste des tâches') }}" />
-
-                @foreach ($state['taches'] as $index => $tache)
-                <div class="mt-2">
-                    <x-label for="taches.{{ $index }}.titre" value="{{ __('Tâche ') . $index+1 }}" />
-                    <x-input for="taches.{{ $index }}.titre" type="text" class="mt-1 block w-full" wire:model="state.taches.{{ $index }}.titre"/>
-                    <x-input-error for="taches.{{ $index }}.titre" class="mt-2" />
-                </div>
-
-                <div class="mt-2">
-                    <x-label for="taches.{{ $index }}.description" value="{{ __('Description Tâche ') . $index+1 }}" />
-                    <textarea id="taches.{{ $index }}.description" rows="4" class="block mt-1 p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" wire:model="state.taches.{{ $index }}.description"></textarea>
-                    <x-input-error for="taches.{{ $index }}.description" class="mt-2" />
-                </div>
-
-                <div wire:click="removeTache({{ $index }})" wire:loading.attr="disabled" class="mt-2 flex justify-end gap-x-2">
-                    <span class="inline-flex justify-center items-center size-[46px] rounded-full text-blue-600 dark:text-blue-500">
-                    <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"> <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/> </svg>
-                    </span>
-                </div>
-                @endforeach
-
+                @if(count($state['taches']) > 0)
+                    @foreach ($state['taches'] as $index => $tache)           
+                    <div class="flex items-center mt-3 px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700">
+                
+                        <x-input wire:model="state.taches.{{ $index }}.titre" id="taches.{{ $index }}.titre" type="text" class="block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="{{ __('Tâche ') . $index+1 }}" />
+                        <x-input-error for="taches.{{ $index }}.titre" class="mt-2" />
+                    
+                        <textarea wire:model="state.taches.{{ $index }}.description" id="taches.{{ $index }}.description" rows="1" class="block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="{{ __('Description Tâche ') . $index+1 }}"></textarea>
+                        <x-input-error for="taches.{{ $index }}.description" class="mt-2" />
+                
+                        <button wire:click="removeTache({{ $index }})" wire:loading.attr="disabled" class="inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600">
+                            <svg class="w-6 h-6 text-red-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
+                            </svg>
+                            <span class="sr-only">Supprimer Tâche</span>
+                        </button>
+                    </div>
+                    @endforeach
+                @endif
                 <div wire:click="addTache" wire:loading.attr="disabled" class="flex items-center justify-center text-blue-600 text-sm py-4 w-full cursor-pointer">
                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"></path></svg>
-                    <p class="ml-2">Ajouter Tâche</p>
+                    <p class="ml-2">Ajouter Tâches</p>
                 </div>
             </div>
 
             <div class="col-span-6 sm:col-span-4 mt-4">
-                <x-label for="etat" value="{{ __('Etat') }}" />
-                <select id="etat" class="mt-1 block w-full" wire:model="state.etat">
-                    <option value="" selected="selected">-- Etat --</option>   
-                        <option value="Affecté">Affecté</option>
-                        <option value="Non Affecté">Non Affecté</option>
-                        <option value="Clôturé">Clôturé</option>
-                    <x-input-error for="etat" class="mt-2" />
-                </select>
+                <x-label for="" value="{{ __('Liste des Critères') }}" />
+                @if(count($state['criteres']) > 0)
+                    @foreach ($state['criteres'] as $index => $tache)           
+                    <div class="flex items-center mt-3 px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700">
+                
+                        <x-input wire:model="state.criteres.{{ $index }}.libelle"  id="criteres.{{ $index }}.libelle" type="text" class="block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="{{ __('Libelle critère ') . $index+1 }}" />
+                        <x-input-error for="criteres.{{ $index }}.libelle" class="mt-2" />
+                    
+                        <button wire:click="removeCritere({{ $index }})" wire:loading.attr="disabled" class="inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600">
+                            <svg class="w-6 h-6 text-red-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
+                            </svg>
+                            <span class="sr-only">Supprimer Question</span>
+                        </button>
+                    </div>
+                    @endforeach
+                @endif
+                <div wire:click="addCritere" wire:loading.attr="disabled" class="flex items-center justify-center text-blue-600 text-sm py-4 w-full cursor-pointer">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"></path></svg>
+                    <p class="ml-2">Ajouter Critères</p>
+                </div>
+            </div>
+
+            <div class="col-span-6 sm:col-span-4 mt-4">
+                <x-label for="" value="{{ __('Liste des Questions') }}" />
+                @if(count($state['questions']) > 0)
+                    @foreach ($state['questions'] as $index => $tache)           
+                    <div class="flex items-center mt-3 px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700">
+                
+                        <x-input wire:model="state.questions.{{ $index }}.titre" id="questions.{{ $index }}.titre" type="text" class="block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="{{ __('Question ') . $index+1 }}" />
+                        <x-input-error for="questions.{{ $index }}.titre" class="mt-2" />
+                    
+                        <button wire:click="removeQuestion({{ $index }})" wire:loading.attr="disabled" class="inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600">
+                            <svg class="w-6 h-6 text-red-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
+                            </svg>
+                            <span class="sr-only">Supprimer Question</span>
+                        </button>
+                    </div>
+                    @endforeach
+                @endif
+                <div wire:click="addQuestion" wire:loading.attr="disabled" class="flex items-center justify-center text-blue-600 text-sm py-4 w-full cursor-pointer">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"></path></svg>
+                    <p class="ml-2">Ajouter Questions</p>
+                </div>
+            </div>
+            
+            <div class="col-span-6 sm:col-span-4 mt-4">
+                <x-label for="etat" value="{{ __('Pièces jointes') }}" />
+                <div class="flex items-center mt-3 justify-center w-full">
+                    <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <svg class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+                            </svg>
+                            <p class="mb-2 text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
+                        </div>
+                        <input id="dropzone-file" type="file" class="hidden" />
+                    </label>
+                </div> 
             </div>
             
         </x-slot>
@@ -216,8 +267,7 @@
             </x-secondary-button>
 
             <x-button class="ml-2" wire:click="createProjet" wire:loading.attr="disabled">
-            <svg class="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>    
-            {{ __('Enregister') }}
+                {{ __('Enregistrer') }}
             </x-button>
         </x-slot>
     </x-dialog-modal>
@@ -252,56 +302,82 @@
                 <x-label for="competence" value="{{ __('Competence') }}" />
                 <x-input id="competence" type="text" class="mt-1 block w-full" wire:model="state.competence" />
                 <x-input-error for="competence" class="mt-2" />
-                @if ($state['competence'])
-                <div class="mt-2">
-                    @foreach ($state['competence'] as $value)
-                        <span class="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400">
-                            {{ $value }}
-                        </span>
-                    @endforeach
-                </div>
-                @endif
+
             </div>
 
             <div class="col-span-6 sm:col-span-4 mt-4">
-
                 <x-label for="" value="{{ __('Liste des tâches') }}" />
-
-                @foreach ($state['taches'] as $index => $tache)
-                <div class="mt-2">
-                    <x-label for="taches.{{ $index }}.titre" value="{{ __('Tâche ') . $index+1 }}" />
-                    <x-input for="taches.{{ $index }}.titre" type="text" class="mt-1 block w-full" wire:model="state.taches.{{ $index }}.titre"/>
-                    <x-input-error for="taches.{{ $index }}.titre" class="mt-2" />
-                </div>
-
-                <div class="mt-2">
-                    <x-label for="taches.{{ $index }}.description" value="{{ __('Description Tâche ') . $index+1 }}" />
-                    <textarea id="taches.{{ $index }}.description" rows="4" class="block mt-1 p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" wire:model="state.taches.{{ $index }}.description"></textarea>
-                    <x-input-error for="taches.{{ $index }}.description" class="mt-2" />
-                </div>
-
-                <div wire:click="removeTache({{ $index }})" wire:loading.attr="disabled" class="mt-2 flex justify-end gap-x-2">
-                    <span class="inline-flex justify-center items-center size-[46px] rounded-full text-blue-600 dark:text-blue-500">
-                    <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"> <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/> </svg>
-                    </span>
-                </div>
-                @endforeach
-
+                @if(count($state['taches']) > 0)
+                    @foreach ($state['taches'] as $index => $tache)           
+                    <div class="flex items-center mt-3 px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700">
+                
+                        <x-input wire:model="state.taches.{{ $index }}.titre" id="taches.{{ $index }}.titre" type="text" class="block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="{{ __('Tâche ') . $index+1 }}" />
+                        <x-input-error for="taches.{{ $index }}.titre" class="mt-2" />
+                    
+                        <textarea wire:model="state.taches.{{ $index }}.description" id="taches.{{ $index }}.description" rows="1" class="block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="{{ __('Description Tâche ') . $index+1 }}"></textarea>
+                        <x-input-error for="taches.{{ $index }}.description" class="mt-2" />
+                
+                        <button wire:click="removeTache({{ $index }})" wire:loading.attr="disabled" class="inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600">
+                            <svg class="w-6 h-6 text-red-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
+                            </svg>
+                            <span class="sr-only">Supprimer Tâche</span>
+                        </button>
+                    </div>
+                    @endforeach
+                @endif
                 <div wire:click="addTache" wire:loading.attr="disabled" class="flex items-center justify-center text-blue-600 text-sm py-4 w-full cursor-pointer">
                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"></path></svg>
-                    <p class="ml-2">Ajouter Tâche</p>
+                    <p class="ml-2">Ajouter Tâches</p>
                 </div>
             </div>
 
             <div class="col-span-6 sm:col-span-4 mt-4">
-                <x-label for="etat" value="{{ __('Etat') }}" />
-                <select id="etat" class="mt-1 block w-full" wire:model="state.etat">
-                    <option value="" selected="selected">-- Etat --</option>   
-                        <option value="Affecté">Affecté</option>
-                        <option value="Non Affecté">Non Affecté</option>
-                        <option value="Clôturé">Clôturé</option>
-                    <x-input-error for="etat" class="mt-2" />
-                </select>
+                <x-label for="" value="{{ __('Liste des Critères') }}" />
+                @if(count($state['criteres']) > 0)
+                    @foreach ($state['criteres'] as $index => $tache)           
+                    <div class="flex items-center mt-3 px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700">
+                
+                        <x-input wire:model="state.criteres.{{ $index }}.libelle"  id="criteres.{{ $index }}.libelle" type="text" class="block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="{{ __('Libelle critère ') . $index+1 }}" />
+                        <x-input-error for="criteres.{{ $index }}.libelle" class="mt-2" />
+                    
+                        <button wire:click="removeCritere({{ $index }})" wire:loading.attr="disabled" class="inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600">
+                            <svg class="w-6 h-6 text-red-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
+                            </svg>
+                            <span class="sr-only">Supprimer Question</span>
+                        </button>
+                    </div>
+                    @endforeach
+                @endif
+                <div wire:click="addCritere" wire:loading.attr="disabled" class="flex items-center justify-center text-blue-600 text-sm py-4 w-full cursor-pointer">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"></path></svg>
+                    <p class="ml-2">Ajouter Critères</p>
+                </div>
+            </div>
+
+            <div class="col-span-6 sm:col-span-4 mt-4">
+                <x-label for="" value="{{ __('Liste des Questions') }}" />
+                @if(count($state['questions']) > 0)
+                    @foreach ($state['questions'] as $index => $tache)           
+                    <div class="flex items-center mt-3 px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700">
+                
+                        <x-input wire:model="state.questions.{{ $index }}.titre" id="questions.{{ $index }}.titre" type="text" class="block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="{{ __('Question ') . $index+1 }}" />
+                        <x-input-error for="questions.{{ $index }}.titre" class="mt-2" />
+                    
+                        <button wire:click="removeQuestion({{ $index }})" wire:loading.attr="disabled" class="inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600">
+                            <svg class="w-6 h-6 text-red-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
+                            </svg>
+                            <span class="sr-only">Supprimer Question</span>
+                        </button>
+                    </div>
+                    @endforeach
+                @endif
+                <div wire:click="addQuestion" wire:loading.attr="disabled" class="flex items-center justify-center text-blue-600 text-sm py-4 w-full cursor-pointer">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"></path></svg>
+                    <p class="ml-2">Ajouter Questions</p>
+                </div>
             </div>
         
         </x-slot>
@@ -311,8 +387,7 @@
                 {{ __('Annuler') }}
             </x-secondary-button>
             <x-button class="ml-2" wire:click="updateProjet" wire:loading.attr="disabled">
-            <svg class="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>    
-            {{ __('Enregistrer') }}
+                {{ __('Enregistrer') }}
             </x-button>
         </x-slot>
     </x-dialog-modal>

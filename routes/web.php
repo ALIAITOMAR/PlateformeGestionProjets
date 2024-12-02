@@ -33,3 +33,11 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/classes', function () {
 Route::middleware(['auth:sanctum', 'verified'])->get('/projets', function () {
     return view('projets');
 })->name('projets');
+
+Route::middleware(['auth:sanctum', 'verified'])->get('/affectations', function () {
+    return view('affectations');
+})->name('affectations');
+
+Route::middleware(['auth:sanctum', 'verified'])->get('/livrables', function () {
+    return view('livrables');
+})->name('livrables');

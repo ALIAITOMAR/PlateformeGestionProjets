@@ -9,26 +9,46 @@ class Affectation extends Model
 {
     use HasFactory;
     
+    protected $casts = [
+        'date_affectation' => 'date',
+        'date_fin' => 'date',
+    ];
+
     protected $fillable = [
         'date_affectation',
         'date_fin',
         'projet_id',
         'enseignant_id',
-        'groupe_id',
+        'classe_id',
     ];
-
-    public function projet()
-    {
-        return $this->belongsTo(Projet::class);
-    }
 
     public function enseignant()
     {
         return $this->belongsTo(Enseignant::class);
     }
 
+    public function apprenant()
+    {
+        return $this->belongsTo(Apprenant::class);
+    }
+
+    public function projet()
+    {
+        return $this->belongsTo(Projet::class);
+    }
+
     public function classe()
     {
         return $this->belongsTo(Classe::class);
+    }
+
+    /*public function livrables()
+    {
+        return $this->hasMany(Livrable::class);
+    }*/
+
+    public function livrable()
+    {
+        return $this->hasOne(Livrable::class);
     }
 }

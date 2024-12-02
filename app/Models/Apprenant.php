@@ -10,6 +10,7 @@ class Apprenant extends Model
     use HasFactory;
 
     protected $fillable = [
+        'cne',
         'date_naissance',
         'niveau',
         'branche',
@@ -36,8 +37,13 @@ class Apprenant extends Model
         return $this->belongsTo(Enseignant::class);
     }
 
-    public function livraisons()
+    public function livrables()
     {
         return $this->hasMany(Livrable::class);
+    }
+
+    public function affectations()
+    {
+        return $this->hasMany(Affectation::class);
     }
 }

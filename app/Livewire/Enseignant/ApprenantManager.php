@@ -107,6 +107,8 @@ class ApprenantManager extends Component
             'prenom' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z0-9\s\-_]+$/'],
             'email' => ['required', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]+$/'],
+            'cne' => ['required', 'string', 'max:255'],
+            'date_naissance' => ['required', 'date'],
             'niveau' => ['required', 'string', 'max:255'],
             'classe' => ['required'],
         ])->validate();
@@ -128,6 +130,8 @@ class ApprenantManager extends Component
             //dd(auth()->user()->enseignants->id);
 
             $user->apprenants()->create([
+                'cne' => $this->state['cne'],
+                'date_naissance' => $this->state['date_naissance'],
                 'niveau' => $this->state['niveau'],
                 'classe_id' => $this->state['classe'],
                 'enseignant_id' => auth()->user()->enseignants->id,
@@ -165,6 +169,7 @@ class ApprenantManager extends Component
             'nom' => $apprenant->user->nom,
             'prenom' => $apprenant->user->prenom,
             'email' => $apprenant->user->email,
+            'cne' => $apprenant->cne,
             'date_naissance' => $apprenant->date_naissance,
             'niveau' => $apprenant->niveau,
             'branche' => $apprenant->branche,
@@ -189,6 +194,8 @@ class ApprenantManager extends Component
             'email' => ['required', 'email', 'max:255', 'unique:users,email,'.Auth::user()->enseignants->apprenants()->value('user_id')],
             'password' => ['string', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]+$/'],
             'niveau' => ['required', 'string', 'max:255'],
+            'cne' => ['required', 'string', 'max:255'],
+            'date_naissance' => ['required', 'string', 'max:255'],
             'classe' => ['required'],
         ])->validate();
 
@@ -208,6 +215,8 @@ class ApprenantManager extends Component
 
             // Mettre à jour les champs Apprenant
             $apprenant->niveau = $this->state['niveau'];
+            $apprenant->cne = $this->state['cne'];
+            $apprenant->date_naissance = $this->state['date_naissance'];
             $apprenant->classe_id = $this->state['classe'];
 
             // Enregistre les modifications apportées si des champs ont changé
@@ -267,6 +276,11 @@ class ApprenantManager extends Component
                   ->orWhere('prenom', 'like', '%' . $this->search . '%')
                   ->orWhere('email', 'like', '%' . $this->search . '%');
         })
+        ->orWhereHas('classe', function ($query) {
+            $query->where('nom', 'like', '%' . $this->search . '%');
+        })
+        ->orWhere('cne', 'like', '%'.$this->search.'%')
+        ->orWhere('niveau', 'like', '%'.$this->search.'%')
         ->orderBy('id', 'ASC')
         ->paginate(5);
 

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->text('description');
             $table->string('module');
             $table->json('competence');
-            $table->enum('etat', ['Affecté', 'Non Affecté', 'Clôturé']);
+            $table->enum('etat', ['Non Affecté', 'Affecté', 'Clôturé'])->default('Non Affecté');
             $table->timestamps();
             $table->foreign('enseignant_id')->references('id')->on('enseignants')->onDelete('cascade');
 
