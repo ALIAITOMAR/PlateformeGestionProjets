@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Projet extends Model
 {
     use HasFactory;
+    
+    protected $casts = [
+        'competence' => 'json'
+    ];
 
     protected $fillable = [
         'enseignant_id',
@@ -15,7 +19,7 @@ class Projet extends Model
         'description',
         'module',
         'competence',
-        'etat',
+        'piece_jointe',
     ];
 
     public function enseignant()
@@ -43,13 +47,8 @@ class Projet extends Model
         return $this->hasMany(Critere::class);
     }
 
-    public function livrables()
+    public function commentaires()
     {
-        return $this->hasMany(Livrable::class);
-    }
-
-    public function classe()
-    {
-        return $this->belongsTo(Classe::class);
+        return $this->hasMany(Commentaire::class);
     }
 }

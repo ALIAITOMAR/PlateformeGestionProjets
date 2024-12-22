@@ -8,34 +8,30 @@ use App\Models\Apprenant;
 use App\Models\Projet;
 use App\Models\Tache;
 use App\Models\User;
+use App\Models\Livrable;
 use App\Models\Affectation;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Livewire\WithPagination;
-use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 
-class ProjetManager extends Component
+class LivrableManager extends Component
 {
     use WithPagination;
 
-    use WithFileUploads;
-
     public $search = '';
 
-    public $file;
-
     public $projetId;
-
     /**
      * The projet instance.
      *
      * @var mixed
      */
     public $projet;
+
 
     /**
      * The component's state.
@@ -73,15 +69,8 @@ class ProjetManager extends Component
     public function mount()
     {
         Auth::check() ? : abort(404);
-        //$this->projet = Projet::all();
+        $this->projet = Livrable::all();
     }
-    
-    public function deliverProject()
-    {
-        dd("sss");
-
-    }
-
 
     /**
      * Confirm that the given Projet should be updated.
@@ -126,6 +115,7 @@ class ProjetManager extends Component
             session()->flash('message', 'Projet a été modifié avec succès.');
             $this->confirmingProjetUpdate = false;
             $this->reset('state');
+            
         }
     }
 
@@ -133,14 +123,14 @@ class ProjetManager extends Component
     {
         $this->resetPage();
     }
-
+    
     public function render()
     {
-        $projets = auth()->user()->apprenants->classe->affectations()->with('projet')
-        //->where('titre', 'like', '%'.$this->search.'%')
-        ->orderBy('id', 'ASC')
+        $livrables = auth()->user()->apprenants->livrables()
+        ->where('description', 'like', '%'.$this->search.'%')
+        ->orderBy('id','ASC')
         ->paginate(5);
 
-        return view('livewire.apprenant.projet-manager', ['projets' => $projets]);
+        return view('livewire.apprenant.livrable-manager', ['livrables' => $livrables]);
     }
 }

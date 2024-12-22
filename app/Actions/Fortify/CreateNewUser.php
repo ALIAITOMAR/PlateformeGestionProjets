@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
 use Laravel\Jetstream\Jetstream;
+use App\Models\Invitation;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Carbon;
 
 class CreateNewUser implements CreatesNewUsers
 {
@@ -27,11 +30,36 @@ class CreateNewUser implements CreatesNewUsers
             'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature() ? ['accepted', 'required'] : '',
         ])->validate();
 
+        // Vérifiez le code
+        $invitation = Invitation::where('token', $input['token'])
+        ->where('email', $input['email'])
+        ->where('statut', 'Actif')
+        ->first();
+
+        if (!$invitation) {
+            throw ValidationException::withMessages([
+                'token' => __('Code de jeton invalide.'),
+            ]);
+        }
+
+        // Vérifiez si le code a expiré
+        if ($invitation->expires_at && $invitation->expires_at < Carbon::now()) {
+            throw ValidationException::withMessages([
+                'token' => __('Le jeton saisi a expiré.'),
+            ]);
+        }
+
+        // Marquer le code comme utilisé
+        $invitation->update(['statut' => 'Utilisé']);
+
         return User::create([
             'nom' => $input['nom'],
             'prenom' => $input['prenom'],
             'email' => $input['email'],
             'password' => Hash::make($input['password']),
+            'role' => 'enseignant',
         ]);
+        
+        return redirect()->route('complete.enseignant.profile');
     }
 }

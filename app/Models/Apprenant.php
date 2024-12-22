@@ -27,23 +27,13 @@ class Apprenant extends Model
         return $this->belongsTo(User::class,'user_id','id');
     }
 
+    public function getFullNameAttribute()
+    {
+        return $this->user->nom . ' ' . $this->user->prenom;
+    }
+
     public function classe()
     {
         return $this->belongsTo(Classe::class);
-    }
-
-    public function enseignant()
-    {
-        return $this->belongsTo(Enseignant::class);
-    }
-
-    public function livrables()
-    {
-        return $this->hasMany(Livrable::class);
-    }
-
-    public function affectations()
-    {
-        return $this->hasMany(Affectation::class);
     }
 }

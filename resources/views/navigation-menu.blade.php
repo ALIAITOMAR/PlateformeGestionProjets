@@ -12,22 +12,26 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    
                     <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                         {{ __('Tableau de bord') }}
                     </x-nav-link>
 
                     @if(auth()->user()->hasRole('admin'))
-                        <x-nav-link href="{{ route('enseignants') }}" :active="request()->routeIs('enseignants')">
+                        <x-nav-link href="{{ route('admin.enseignants') }}" :active="request()->routeIs('admin.enseignants')">
                             {{ __('Enseignants') }}
                         </x-nav-link>
+                        <x-nav-link href="{{ route('admin.invitations') }}" :active="request()->routeIs('admin.invitations')">
+                        {{ __('Invitations') }}
+                    </x-nav-link>
                     @endif
 
                     @if(auth()->user()->hasRole('enseignant'))
-                    <x-nav-link href="{{ route('classes') }}" :active="request()->routeIs('classes')">
+                    <x-nav-link href="{{ route('enseignant.classes') }}" :active="request()->routeIs('enseignant.classes')">
                         {{ __('Classes') }}
                     </x-nav-link>
 
-                    <x-nav-link href="{{ route('apprenants') }}" :active="request()->routeIs('apprenants')">
+                    <x-nav-link href="{{ route('enseignant.apprenants') }}" :active="request()->routeIs('enseignant.apprenants')">
                         {{ __('Apprenants') }}
                     </x-nav-link>
 
@@ -47,13 +51,13 @@
                                 <div class="block px-4 py-2 text-xs text-gray-400">
                                     {{ __('Gérer mes projets') }}
                                 </div>
-                                <x-dropdown-link href="{{ route('projets') }}" :active="request()->routeIs('projets')">
+                                <x-dropdown-link href="{{ route('enseignant.projets') }}" :active="request()->routeIs('enseignant.projets')">
                                     {{ __('Gestion des Projets') }}
                                 </x-dropdown-link>
-                                <x-dropdown-link href="{{ route('affectations') }}" :active="request()->routeIs('affectations')">
+                                <x-dropdown-link href="{{ route('enseignant.affectations') }}" :active="request()->routeIs('affectations')">
                                     {{ __('Affectation Projets') }}
                                 </x-dropdown-link>
-                                <x-dropdown-link href="{{ route('livrables') }}" :active="request()->routeIs('livrables')">
+                                <x-dropdown-link href="{{ route('enseignant.livrables') }}" :active="request()->routeIs('livrables')">
                                     {{ __('Gestion des livrables') }}
                                 </x-dropdown-link>
                                 <x-dropdown-link href="{{ route('profile.show') }}">
@@ -65,10 +69,10 @@
                     @endif
 
                     @if(auth()->user()->hasRole('apprenant'))
-                    <x-nav-link href="{{ route('projets') }}" :active="request()->routeIs('classes')">
-                        {{ __('Projets attribués') }}
+                    <x-nav-link href="{{ route('apprenant.projets') }}" :active="request()->routeIs('projets')">
+                        {{ __('Projets') }}
                     </x-nav-link>
-                    <x-nav-link href="{{ route('projets') }}" :active="request()->routeIs('classes')">
+                    <x-nav-link href="{{ route('apprenant.livrables') }}" :active="request()->routeIs('livrables')">
                         {{ __('Mes Livrables') }}
                     </x-nav-link>
                     @endif

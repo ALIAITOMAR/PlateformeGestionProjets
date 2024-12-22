@@ -13,6 +13,7 @@ use Livewire\WithPagination;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class LivrableManager extends Component
 {
@@ -85,7 +86,7 @@ class LivrableManager extends Component
             'note_produit' => $livrable->note_produit,
             'note_propos' => $livrable->note_propos,
             'note_processus' => $livrable->note_processus,
-            'commentaires' => $livrable->commentaires,
+            'description' => $livrable->description,
         ];
 
         $this->confirmingLivrableUpdate = true;
@@ -102,7 +103,7 @@ class LivrableManager extends Component
             'note_produit' => ['nullable', 'regex:/^\d{1,2}\.\d{1,2}$/'],
             'note_propos' => ['nullable', 'regex:/^\d{1,2}\.\d{1,2}$/'],
             'note_processus' => ['nullable', 'regex:/^\d{1,2}\.\d{1,2}$/'],
-            'commentaires' => ['required', 'string', 'max:255',],
+            'description' => ['required', 'string', 'max:255',],
         ])->validate();
 
         
@@ -113,7 +114,7 @@ class LivrableManager extends Component
             $livrable->note_produit = $this->state['note_produit'];
             $livrable->note_propos = $this->state['note_propos'];
             $livrable->note_processus = $this->state['note_processus'];
-            $livrable->commentaires = $this->state['commentaires'];
+            $livrable->description = $this->state['description'];
             $livrable->save();
                 
             session()->flash('message', 'Livrable a été modifié avec succès.');
@@ -153,38 +154,29 @@ class LivrableManager extends Component
         $this->resetPage();
     }
 
-    /*public function updated($fields)
+    public function telechargerFichier($cheminFichier)
     {
-        $this->validateOnly($fields);
-    }*/
-
-    public function downloadLivrable($livrableId)
-    {
-        // Récupérer la livraison
-        $livrable = Livrable::findOrFail($livrableId);
-
-        // Vérifiez si le chemin du fichier existe
-        if ($livrable->chemin_fichier) {
-            // Générer la réponse de téléchargement de fichier
-            return response()->download(public_path($livrable->chemin_fichier));
+        if (Storage::exists($cheminFichier)) {
+            return response()->streamDownload(function () use ($cheminFichier) {
+                echo Storage::get($cheminFichier);
+            }, basename($cheminFichier));
         } else {
-            // Gérer le cas où le fichier n'existe pas
-            session()->flash('message', 'Aucun fichier disponible en téléchargement.');
-            return back();
+            session()->flash('error', 'Fichier introuvable.');
         }
     }
-
     
     public function render()
     {
-        $livrables = Livrable::whereIn('projet_id', Auth::user()->enseignants->projets->pluck('id'))
-        ->with(['projet', 'affectation'])
-        ->whereHas('projet', function ($query) {
-            $query->where('titre', 'like', '%' . $this->search . '%');
+        $livrables = Livrable::with(['affectation.projet'])
+        ->whereIn('etat', ['Rendu', 'Rendu en retard'])
+        ->where(function($query) {
+            $query->whereHas('affectation.projet', function($subQuery) {
+                $subQuery->where('titre', 'like', '%'.$this->search.'%');
+            });
         })
-        ->orWhere('commentaires', 'like', '%'.$this->search.'%')
-        ->orderBy('id','ASC')
-        ->paginate(5);
+        ->latest('created_at')
+        ->paginate(10)
+        ->unique('apprenant_id');
 
         return view('livewire.enseignant.livrable-manager', ['livrables' => $livrables]);
     }

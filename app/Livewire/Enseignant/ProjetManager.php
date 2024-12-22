@@ -14,10 +14,16 @@ use Illuminate\Support\Facades\Hash;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Livewire\WithFileUploads;
+
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ProjetManager extends Component
 {
     use WithPagination;
+
+    use WithFileUploads;
 
     public $search = '';
 
@@ -40,6 +46,7 @@ class ProjetManager extends Component
         'description' => null,
         'module' => null,
         'competence' => null,
+        'piece_jointe' => null,
         'taches' => [
             ['titre' => '', 'description' => '']
         ],
@@ -50,6 +57,13 @@ class ProjetManager extends Component
             ['libelle' => '']
         ]
     ];
+
+    /**
+     * The new file for the projet.
+     *
+     * @var mixed
+     */
+    public $file;
 
     //public $fields = [];
 
@@ -80,7 +94,7 @@ class ProjetManager extends Component
      * @var int
      */
     public $projetIdBeingDeleted;
-
+    
     /**
      * Mount the component.
      *
@@ -148,6 +162,7 @@ class ProjetManager extends Component
         $this->resetErrorBag();
         $this->confirmingProjetAdd = true;
         $this->reset('state');
+        $this->reset('file');
     }
 
     /**
@@ -168,15 +183,22 @@ class ProjetManager extends Component
             'questions.*.titre' => ['required', 'string', 'max:255'],
         ])->validate();
 
+        $this->validate([
+            'file' => ['nullable', 'file', 'mimes:pdf,xlsx,docx,zip', 'max:2048'],
+        ]);
+
         DB::beginTransaction();
 
         try {
-        
+            
+            $piece_jointe = $this->file ? $this->file->storeAs('projets/' . auth()->user()->enseignants->matricule, $this->file->getClientOriginalName()) : null;        
+
             $projet = auth()->user()->enseignants->projets()->create([
                 'titre' => $this->state['titre'],
                 'description' => $this->state['description'],
                 'module' => $this->state['module'],
-                'competence' => json_encode(explode(',', $this->state['competence'])),
+                'competence' => $this->state['competence'],
+                'piece_jointe' => $piece_jointe,
             ]);
             
             $projet->taches()->createMany($this->state['taches']);
@@ -196,6 +218,7 @@ class ProjetManager extends Component
         $this->confirmingProjetAdd = false;
         
         $this->reset('state');
+        $this->reset('file');
     }
 
     /**
@@ -210,12 +233,15 @@ class ProjetManager extends Component
 
         $projet = Projet::find($projetId);
         
+        //dd(json_decode($projet->competence, true));
+
         $this->state = [
             'id' => $projet->id,
             'titre' => $projet->titre,
             'description' => $projet->description,
             'module' => $projet->module,
-            'competence' => json_decode($projet->competence, true),
+            'competence' => $projet->competence,
+            'piece_jointe' => $projet->piece_jointe,
             'taches' => $projet->taches->toArray(),
             'criteres' => $projet->criteres->toArray(),
             'questions' => $projet->questions->toArray(),
@@ -224,6 +250,12 @@ class ProjetManager extends Component
         $this->confirmingProjetUpdate = true;
     }
     
+    public function download(Projet $projet)
+    {
+        $filePath = storage_path('app/' . $projet->piece_jointe);
+        return response()->download($filePath);
+    }
+
     /**
      * Update the Projet.
      *
@@ -242,16 +274,25 @@ class ProjetManager extends Component
             'questions.*.titre' => ['required', 'string', 'max:255'],
         ])->validate();
 
+        $this->validate([
+            'file' => ['nullable', 'file', 'mimes:pdf,xlsx,docx,zip', 'max:2048'],
+        ]);
         
         if ($this->state['id']) {
 
             $projet = Projet::findOrFail($this->state['id']);        
-            
+
             // Mettre à jour les champs Projet
             $projet->titre = $this->state['titre'];
             $projet->description = $this->state['description'];
             $projet->module = $this->state['module'];
-            $projet->competence = $this->state['competence'] ? explode(',', $this->state['competence']) : null;
+            $projet->competence = $this->state['competence'];
+            if($this->file)
+            {
+                $fileName = $this->file->store('projets');
+                $projet->piece_jointe = $fileName;
+            }
+            
             // Mettre à jour les champs Tache
             $tacheIds = collect($this->state['taches'])->pluck('id')->filter()->toArray();
             $projet->taches()->whereNotIn('id', $tacheIds)->delete();
@@ -281,6 +322,7 @@ class ProjetManager extends Component
             session()->flash('message', 'Projet a été modifié avec succès.');
             $this->confirmingProjetUpdate = false;
             $this->reset('state');
+            $this->reset('file');
             
         }
     }
@@ -316,10 +358,16 @@ class ProjetManager extends Component
         $this->resetPage();
     }
 
-    /*public function updated($fields)
+    public function telechargerFichier($cheminFichier)
     {
-        $this->validateOnly($fields);
-    }*/
+        if (Storage::exists($cheminFichier)) {
+            return response()->streamDownload(function () use ($cheminFichier) {
+                echo Storage::get($cheminFichier);
+            }, basename($cheminFichier));
+        } else {
+            session()->flash('error', 'Fichier introuvable.');
+        }
+    }
     
     public function render()
     {

@@ -107,7 +107,7 @@ class ApprenantManager extends Component
             'prenom' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z0-9\s\-_]+$/'],
             'email' => ['required', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]+$/'],
-            'cne' => ['required', 'string', 'max:255'],
+            'cne' => ['required', 'string', 'max:255', 'unique:apprenants'],
             'date_naissance' => ['required', 'date'],
             'niveau' => ['required', 'string', 'max:255'],
             'classe' => ['required'],
@@ -194,7 +194,7 @@ class ApprenantManager extends Component
             'email' => ['required', 'email', 'max:255', 'unique:users,email,'.Auth::user()->enseignants->apprenants()->value('user_id')],
             'password' => ['string', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]+$/'],
             'niveau' => ['required', 'string', 'max:255'],
-            'cne' => ['required', 'string', 'max:255'],
+            'cne' => ['required', 'string', 'max:255', 'unique:apprenants,cne,'.Auth::user()->enseignants->apprenants()->value('user_id')],
             'date_naissance' => ['required', 'string', 'max:255'],
             'classe' => ['required'],
         ])->validate();
@@ -261,11 +261,6 @@ class ApprenantManager extends Component
     {
         $this->resetPage();
     }
-
-    /*public function updated($fields)
-    {
-        $this->validateOnly($fields);
-    }*/
     
     public function render()
     {

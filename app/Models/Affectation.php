@@ -4,48 +4,33 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Affectation extends Model
 {
     use HasFactory;
     
     protected $casts = [
-        'date_affectation' => 'date',
-        'date_fin' => 'date',
+        'date_echeance' => 'date',
     ];
 
     protected $fillable = [
-        'date_affectation',
-        'date_fin',
-        'projet_id',
         'enseignant_id',
+        'projet_id',
         'classe_id',
+        'date_echeance',
     ];
 
-    public function enseignant()
+    
+    public function classe()
     {
-        return $this->belongsTo(Enseignant::class);
-    }
-
-    public function apprenant()
-    {
-        return $this->belongsTo(Apprenant::class);
+        return $this->belongsTo(Classe::class);
     }
 
     public function projet()
     {
         return $this->belongsTo(Projet::class);
     }
-
-    public function classe()
-    {
-        return $this->belongsTo(Classe::class);
-    }
-
-    /*public function livrables()
-    {
-        return $this->hasMany(Livrable::class);
-    }*/
 
     public function livrable()
     {

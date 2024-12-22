@@ -99,19 +99,16 @@ class AffectationManager extends Component
         Validator::make($this->state, [
             'projet_id' => ['required'],
             'classe_id' => ['required'],
-            'date_affectation' => ['required', 'date'],
-            'date_fin' => ['required', 'date'],
-            'etat' => ['required'],
+            'date_echeance' => ['required', 'date', 'after_or_equal:today'],
         ])->validate();
 
         $affectation = auth()->user()->enseignants->affectations()->create([
             'projet_id' => $this->state['projet_id'],
             'classe_id' => $this->state['classe_id'],
-            'date_affectation' => $this->state['date_affectation'],
-            'date_fin' => $this->state['date_fin'],
+            'date_echeance' => $this->state['date_echeance'],
         ]);
 
-        $affectation->projet->etat = $this->state['etat'];
+        $affectation->projet->etat = 'Actif';
         $affectation->projet->save();
 
         session()->flash('message', 'Projet affecté avec succès à la classe.');
@@ -137,9 +134,8 @@ class AffectationManager extends Component
             'id' => $affectation->id,
             'projet_id' => $affectation->projet_id,
             'classe_id' => $affectation->classe_id,
-            'date_affectation' => $affectation->date_affectation->format('Y-m-d'),
-            'date_fin' => $affectation->date_fin->format('Y-m-d'),
-            'etat' => $affectation->projet->etat,
+            'date_echeance' => $affectation->date_echeance->format('Y-m-d'),
+            'etat' => $affectation->etat,
         ];
 
         $this->confirmingAffectationUpdate = true;
@@ -155,8 +151,7 @@ class AffectationManager extends Component
         Validator::make($this->state, [
             'projet_id' => ['required'],
             'classe_id' => ['required'],
-            'date_affectation' => ['required', 'date'],
-            'date_fin' => ['required', 'date'],
+            'date_echeance' => ['required', 'date', 'after_or_equal:today'],
             'etat' => ['required'],
         ])->validate();
 
@@ -167,11 +162,11 @@ class AffectationManager extends Component
 
             $affectation->projet_id = $this->state['projet_id'];
             $affectation->classe_id = $this->state['classe_id'];
-            $affectation->date_affectation = $this->state['date_affectation'];
-            $affectation->date_fin = $this->state['date_fin'];
-            $affectation->projet->etat = $this->state['etat'];
+            $affectation->date_echeance = $this->state['date_echeance'];
+            $affectation->etat = $this->state['etat'];
+            //$affectation->projet->etat = $this->state['etat'];
 
-            $affectation->projet->save();
+            //$affectation->projet->save();
             $affectation->save();
                 
             session()->flash('message', 'Affectation a été modifié avec succès.');

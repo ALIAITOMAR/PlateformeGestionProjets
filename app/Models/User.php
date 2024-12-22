@@ -70,10 +70,10 @@ class User extends Authenticatable
         return $this->morphTo();
     }*/
 
-    /*public function enseignant()
+    public function hasCompletedRegistration()
     {
-        return $this->belongsTo(Enseignant::class);
-    }*/
+        return $this->enseignants()->exists();
+    }
 
     public function enseignants() {
         return $this->hasOne(Enseignant::class, 'user_id', 'id');
@@ -86,5 +86,10 @@ class User extends Authenticatable
     public function hasRole($role)
     {
         return $this->role === $role;
+    }
+
+    public function commentaires()
+    {
+        return $this->hasMany(Commentaire::class);
     }
 }

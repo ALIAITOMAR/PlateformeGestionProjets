@@ -13,16 +13,16 @@ return new class extends Migration
     {
         Schema::create('livrables', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('projet_id');    // Foreign key column
+            $table->unsignedBigInteger('affectation_id');    // Foreign key column
             $table->unsignedBigInteger('apprenant_id'); // Foreign key column
-            $table->string('chemin_fichier');
-            $table->enum('etat', ['Non rendu', 'rendu', 'rendu en retard'])->default('Non rendu');
+            $table->string('piece_jointe');
+            $table->enum('etat', ['Non rendu', 'Rendu', 'Rendu en retard', 'Approuvé', 'Rejeté'])->default('Non rendu');
             $table->float('note_produit', 8, 2)->nullable();
             $table->float('note_propos', 8, 2)->nullable();
             $table->float('note_processus', 8, 2)->nullable();
-            $table->string('commentaires')->nullable();
+            $table->string('description')->nullable();
             $table->timestamps();
-            $table->foreign('projet_id')->references('id')->on('projets')->onDelete('cascade');
+            $table->foreign('affectation_id')->references('id')->on('affectations')->onDelete('cascade');
             $table->foreign('apprenant_id')->references('id')->on('apprenants')->onDelete('cascade');
         });
     }

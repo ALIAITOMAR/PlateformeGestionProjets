@@ -33,6 +33,12 @@
                 <x-label for="password_confirmation" value="{{ __('Confirmez le mot de passe') }}" />
                 <x-input id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation" required autocomplete="new-password" />
             </div>
+            
+            <div class="mt-4">
+                <x-label for="token" value="{{ __('Jeton dinscription') }}" />
+                <x-input id="token" class="block mt-1 w-full" type="text" name="token" :value="old('token')" required autofocus />
+            </div>
+
 
             @if (Laravel\Jetstream\Jetstream::hasTermsAndPrivacyPolicyFeature())
                 <div class="mt-4">

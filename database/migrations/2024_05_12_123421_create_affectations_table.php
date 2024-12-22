@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('affectations', function (Blueprint $table) {
             $table->id();
-            $table->date('date_affectation');
-            $table->date('date_fin');
             $table->unsignedBigInteger('enseignant_id'); // Foreign key column
-            $table->unsignedBigInteger('classe_id');     // Foreign key column
             $table->unsignedBigInteger('projet_id');     // Foreign key column
+            $table->unsignedBigInteger('classe_id');     // Foreign key column
+            $table->date('date_echeance');
+            $table->enum('etat', ['Actif', 'Clôturé'])->default('Actif');
             $table->timestamps();
             $table->foreign('enseignant_id')->references('id')->on('enseignants')->onDelete('cascade');
             $table->foreign('classe_id')->references('id')->on('classes')->onDelete('cascade');

@@ -1,12 +1,23 @@
 <div class="p-6 relative overflow-x-auto shadow-md sm:rounded-lg">
 
-    <div>
-        @if (session()->has('message'))
-            <div class="alert alert-success">
-                {{ session('message') }}
-            </div>
-        @endif
-    </div>
+
+@if (session()->has('message'))
+<div id="toast-bottom-left" class="fixed flex items-center w-full max-w-xs p-4 space-x-4 text-gray-500 bg-white divide-x rtl:divide-x-reverse divide-gray-200 rounded-lg shadow bottom-5 left-5 dark:text-gray-400 dark:divide-gray-700 space-x dark:bg-gray-800" role="alert">
+<div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg dark:bg-green-800 dark:text-green-200">
+        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+        </svg>
+        <span class="sr-only">Check icon</span>
+    </div>    
+<div class="ms-3 text-sm font-normal">{{ session('message') }}</div>
+<button type="button" class="ms-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700" data-dismiss-target="#toast-success" aria-label="Close">
+        <span class="sr-only">Close</span>
+        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+        </svg>
+    </button>
+</div>
+@endif
     
     <div class="flex items-center justify-between flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-4 bg-white dark:bg-gray-900">
             {{-- Add Button Action --}}
@@ -35,9 +46,6 @@
                     Titre Projet
                 </th>
                 <th scope="col" class="px-6 py-3">
-                    Date Affectation
-                </th>
-                <th scope="col" class="px-6 py-3">
                     Classe
                 </th>
                 <th scope="col" class="px-6 py-3">
@@ -59,13 +67,10 @@
                 {{ $affectation->projet->titre }}
                 </td>
                 <td class="px-6 py-4">
-                    {{ $affectation->date_affectation->format('d/m/Y') }}
-                </td>
-                <td class="px-6 py-4">
                 {{ $affectation->classe->nom }}
                 </td>
                 <td class="px-6 py-4">
-                {{ $affectation->date_fin->format('d/m/Y') }}
+                {{ $affectation->date_echeance->format('d/m/Y') }}
                 </td>
 
                 <td class="px-6 py-4">
@@ -109,10 +114,11 @@
             {{-- Affectation input --}}
              <div class="col-span-6 sm:col-span-4 mt-4">
                 <x-label for="projet_id" value="{{ __('Projet') }}" />
-                <select id="projet_id" class="mt-1 block w-full" wire:model="state.projet_id">
+                <select id="projet_id" class="mt-1 block w-full" wire:model.lazy="state.projet_id">
+                    <option value="" selected="selected">-- Veuillez sélectionner un projet --</option>    
                     @foreach($projets as $projet)
-                        <option value="{{ $projet->id }}" {{ $projet->affectations->isNotEmpty() ? 'disabled' : '' }}>
-                            {{ $projet->titre }} {{ $projet->affectations->isNotEmpty() ? '(Déjà affecté)' : '' }}
+                        <option value="{{ $projet->id }}">
+                            {{ $projet->titre }}
                         </option>
                     @endforeach
                     <x-input-error for="projet_id" class="mt-2" />
@@ -121,10 +127,11 @@
 
             <div class="col-span-6 sm:col-span-4 mt-4">
                 <x-label for="classe_id" value="{{ __('Classe') }}" />
-                <select id="classe_id" class="mt-1 block w-full" wire:model="state.classe_id">
+                <select id="classe_id" class="mt-1 block w-full" wire:model.lazy="state.classe_id">
+                <option value="" selected="selected">-- Veuillez sélectionner une classe --</option>
                     @foreach($classes as $classe)
-                        <option value="{{ $classe->id }}" {{ $classe->affectations->isNotEmpty() ? 'disabled' : '' }}>
-                            {{ $classe->nom }} {{ $classe->affectations->isNotEmpty() ? '(Déjà affecté)' : '' }}
+                        <option value="{{ $classe->id }}">
+                            {{ $classe->nom }}
                         </option>
                     @endforeach
                     <x-input-error for="classe_id" class="mt-2" />
@@ -132,25 +139,9 @@
             </div>
 
             <div class="col-span-6 sm:col-span-4 mt-4">
-                <x-label for="date_affectation" value="{{ __('Date Affectation') }}" />
-                <x-input id="date_affectation" type="date" class="mt-1 block w-full" wire:model="state.date_affectation" />
-                <x-input-error for="date_affectation" class="mt-2" />
-            </div>
-
-            <div class="col-span-6 sm:col-span-4 mt-4">
-                <x-label for="date_fin" value="{{ __('Date Fin') }}" />
-                <x-input id="date_fin" type="date" class="mt-1 block w-full" wire:model="state.date_fin" />
-                <x-input-error for="date_fin" class="mt-2" />
-            </div>
-            
-            <div class="col-span-6 sm:col-span-4 mt-4">
-                <x-label for="etat" value="{{ __('Etat') }}" />
-                <select id="etat" class="mt-1 block w-full" wire:model="state.etat">
-                    <option value="" selected="selected">-- Veuillez sélectionner --</option>   
-                        <option value="Affecté">Affecté</option>
-                        <option value="Clôturé">Clôturé</option>
-                    <x-input-error for="etat" class="mt-2" />
-                </select>
+                <x-label for="date_echeance" value="{!! __('Date d\'échéance') !!}" />
+                <x-input id="date_echeance" type="date" class="mt-1 block w-full" wire:model="state.date_echeance" />
+                <x-input-error for="date_echeance" class="mt-2" />
             </div>
 
         </x-slot>
@@ -160,8 +151,7 @@
             </x-secondary-button>
 
             <x-button class="ml-2" wire:click="createAffectation" wire:loading.attr="disabled">
-            <svg class="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>    
-            {{ __('Enregister') }}
+                {{ __('Enregister') }}
             </x-button>
         </x-slot>
     </x-dialog-modal>
@@ -196,22 +186,15 @@
             </div>
 
             <div class="col-span-6 sm:col-span-4 mt-4">
-                <x-label for="date_affectation" value="{{ __('Date Affectation') }}" />
-                <x-input id="date_affectation" type="date" class="mt-1 block w-full" wire:model="state.date_affectation" />
-                <x-input-error for="date_affectation" class="mt-2" />
-            </div>
-
-            <div class="col-span-6 sm:col-span-4 mt-4">
-                <x-label for="date_fin" value="{{ __('Date Fin') }}" />
-                <x-input id="date_fin" type="date" class="mt-1 block w-full" wire:model="state.date_fin" />
-                <x-input-error for="date_fin" class="mt-2" />
+                <x-label for="date_echeance" value="{{ __('Date Fin') }}" />
+                <x-input id="date_echeance" type="date" class="mt-1 block w-full" wire:model="state.date_echeance" />
+                <x-input-error for="date_echeance" class="mt-2" />
             </div>
         
             <div class="col-span-6 sm:col-span-4 mt-4">
                 <x-label for="etat" value="{{ __('Etat') }}" />
                 <select id="etat" class="mt-1 block w-full" wire:model="state.etat">
-                    <option value="" selected="selected">-- Veuillez sélectionner --</option>   
-                        <option value="Affecté">Affecté</option>
+                        <option value="Actif">Actif</option>
                         <option value="Clôturé">Clôturé</option>
                     <x-input-error for="etat" class="mt-2" />
                 </select>

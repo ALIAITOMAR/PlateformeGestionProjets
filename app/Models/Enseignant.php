@@ -49,8 +49,4 @@ class Enseignant extends Model
         return $this->hasMany(Affectation::class);
     }
 
-    public function livrables()
-    {
-        return $this->hasManyThrough(Livrable::class);
-    }
 }

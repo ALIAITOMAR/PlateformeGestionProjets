@@ -10,19 +10,15 @@ class Livrable extends Model
     use HasFactory;
 
     protected $fillable = [
-        'contenu_livre',
+        'affectation_id ',
+        'apprenant_id',
+        'piece_jointe',
         'etat',
         'note_produit',
         'note_propos',
         'note_processus',
-        'projet_id',
-        'apprenant_id',
+        'description',
     ];
-
-    public function projet()
-    {
-        return $this->belongsTo(Projet::class);
-    }
 
     public function apprenant()
     {

@@ -1,14 +1,24 @@
 <div class="p-6 relative overflow-x-auto shadow-md sm:rounded-lg">
 
-    <div>
-        @if (session()->has('message'))
-            <div class="alert alert-success">
-                {{ session('message') }}
-            </div>
-        @endif
-    </div>
-    
-    <div class="flex items-center justify-between flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-4 bg-white dark:bg-gray-900">
+@if (session()->has('message'))
+<div id="toast-bottom-left" class="fixed flex items-center w-full max-w-xs p-4 space-x-4 text-gray-500 bg-white divide-x rtl:divide-x-reverse divide-gray-200 rounded-lg shadow bottom-5 left-5 dark:text-gray-400 dark:divide-gray-700 space-x dark:bg-gray-800" role="alert">
+<div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg dark:bg-green-800 dark:text-green-200">
+        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+        </svg>
+        <span class="sr-only">Check icon</span>
+    </div>    
+<div class="ms-3 text-sm font-normal">{{ session('message') }}</div>
+<button type="button" class="ms-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700" data-dismiss-target="#toast-success" aria-label="Close">
+        <span class="sr-only">Close</span>
+        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+        </svg>
+    </button>
+</div>
+@endif
+
+    <div class="flex mt-4 items-center justify-between flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-4 bg-white dark:bg-gray-900">
             {{-- Add Button Action --}}
             <div class="relative">
                 <x-button wire:click="confirmProjetAdd" class="bg-indigo-700 hover:bg-indigo-900">
@@ -65,7 +75,7 @@
                 <td class="px-6 py-4">
                     <div class="flex flex-col gap-y-2">
                     <div>
-                        @if($projet->etat == 'Affecté')
+                        @if($projet->etat == 'Actif')
                         <span class="py-1 px-2 inline-flex items-center gap-x-1 text-xs font-medium bg-teal-100 text-teal-800 rounded-full dark:bg-teal-500/10 dark:text-teal-500">
                             <svg class="flex-shrink-0 size-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
@@ -75,7 +85,7 @@
                         </span>
                         @endif
 
-                        @if($projet->etat == 'Non Affecté')
+                        @if($projet->etat == 'Brouillon')
                         <span class="py-1 px-1.5 inline-flex items-center gap-x-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full dark:bg-yellow-500/10 dark:text-yellow-500">
                             <svg class="flex-shrink-0 size-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="12" x2="12" y1="2" y2="6"></line>
@@ -91,7 +101,7 @@
                         </span>
                         @endif
 
-                        @if($projet->etat == 'Clôturé')
+                        @if($projet->etat == 'Archivé')
                         <span class="py-1 px-1.5 inline-flex items-center gap-x-1 text-xs font-medium bg-red-100 text-red-800 rounded-full dark:bg-red-500/10 dark:text-red-500">
                             <svg class="flex-shrink-0 size-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
@@ -152,7 +162,7 @@
 
             <div class="col-span-6 sm:col-span-4 mt-4">
                 <x-label for="description" value="{{ __('Description') }}" />
-                <textarea id="description" type="text" class="mt-1 block w-full" wire:model="state.description"></textarea>
+                <textarea id="description" type="text" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600" rows="3"  wire:model="state.description"></textarea>
                 <x-input-error for="description" class="mt-2" />
             </div>
 
@@ -166,7 +176,6 @@
                 <x-label for="competence" value="{{ __('Competence (Séparées par des virgules)') }}" />
                 <x-input id="competence" type="text" class="mt-1 block w-full" wire:model="state.competence" />
                 <x-input-error for="competence" class="mt-2" />
-                
             </div>
 
             <div class="col-span-6 sm:col-span-4 mt-4">
@@ -243,21 +252,74 @@
                     <p class="ml-2">Ajouter Questions</p>
                 </div>
             </div>
-            
+
             <div class="col-span-6 sm:col-span-4 mt-4">
-                <x-label for="etat" value="{{ __('Pièces jointes') }}" />
-                <div class="flex items-center mt-3 justify-center w-full">
-                    <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
-                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                            <svg class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
-                            </svg>
-                            <p class="mb-2 text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold">Click to upload</span> or drag and drop</p>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
-                        </div>
-                        <input id="dropzone-file" type="file" class="hidden" />
+                <x-label for="create-file" value="{{ __('Pièces jointes') }}" />
+                <div
+                    x-data="{ isUploading: false, progress: 0 }"
+                    x-on:livewire-upload-start="isUploading = true"
+                    x-on:livewire-upload-finish="isUploading = true; progress = 0;"
+                    x-on:livewire-upload-progress="progress = $event.detail.progress"
+                    x-on:livewire-upload-cancel="isUploading = false; progress = 0;"
+                    @dragover.prevent
+                    @drop.prevent="isUploading = true; $refs.fileInput.files = $event.dataTransfer.files; $refs.fileInput.dispatchEvent(new Event('change'));"
+                >
+                    <label class="group p-4 mt-3 sm:p-7 block cursor-pointer text-center border-2 border-dashed border-gray-200 rounded-lg focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 dark:border-neutral-700">
+                        <input id="create-file" name="file" type="file" wire:model="file" class="sr-only">
+                        <svg class="size-10 mx-auto text-gray-400 dark:text-neutral-600" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M7.646 5.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708l2-2z"/>
+                            <path d="M4.406 3.342A5.53 5.53 0 0 1 8 2c2.69 0 4.923 2 5.166 4.579C14.758 6.804 16 8.137 16 9.773 16 11.569 14.502 13 12.687 13H3.781C1.708 13 0 11.366 0 9.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383zm.653.757c-.757.653-1.153 1.44-1.153 2.056v.448l-.445.049C2.064 6.805 1 7.952 1 9.318 1 10.785 2.23 12 3.781 12h8.906C13.98 12 15 10.988 15 9.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 4.825 10.328 3 8 3a4.53 4.53 0 0 0-2.941 1.1z"/>
+                        </svg>
+                        <span class="mt-2 block text-sm text-gray-800 dark:text-neutral-200">
+                            Parcourir votre appareil <span class="group-hover:text-blue-700 text-blue-600">Faire glisser-déposer</span>
+                        </span>
+                        <span class="mt-1 block text-xs text-gray-500 dark:text-neutral-500">
+                            Taille maximale du fichier est de 2 MB
+                        </span>
                     </label>
-                </div> 
+                    <div x-show="isUploading">
+                        <div class="mb-2 flex justify-between items-center">
+                            <div class="flex items-center mt-3 gap-x-3">
+                                <span class="size-8 flex justify-center items-center border border-gray-200 text-gray-500 rounded-lg dark:border-neutral-700 dark:text-neutral-500">
+                                    <svg class="flex-shrink-0 size-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="17 8 12 3 7 8"></polyline>
+                                    <line x1="12" x2="12" y1="3" y2="15"></line>
+                                    </svg>
+                                </span>
+                                <div>
+                                    @if ($file)
+                                    <p class="text-sm font-medium text-gray-800 dark:text-white">{{ $file->getClientOriginalName() }}</p>
+                                    <p class="text-xs text-gray-500 dark:text-neutral-500">{{ formatBytes($file->getSize()) }}</p>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="inline-flex items-center gap-x-2">
+                                @if($file && $file->getSize() > 0)
+                                <svg class="flex-shrink-0 size-4 text-teal-500" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"></path>
+                                </svg>
+                                @else
+                                <a wire:click="$cancelUpload('file')" class="text-gray-500 hover:text-gray-800 dark:text-neutral-500 dark:hover:text-neutral-200" href="#">
+                                    <svg class="flex-shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M3 6h18"></path>
+                                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                                    <line x1="10" x2="10" y1="11" y2="17"></line>
+                                    <line x1="14" x2="14" y1="11" y2="17"></line>
+                                    </svg>
+                                </a>
+                                <span class="text-sm text-gray-800 dark:text-white" x-text="progress"></span>%
+                                @endif
+                            </div>
+                        </div>
+                        <div class="flex w-full h-2 bg-gray-200 rounded-full overflow-hidden dark:bg-neutral-700" role="progressbar" aria-valuenow="1" aria-valuemin="0" aria-valuemax="100">
+                            <div class="flex flex-col justify-center rounded-full overflow-hidden bg-blue-600 text-xs text-white text-center whitespace-nowrap transition duration-500 dark:bg-blue-500" :style="{ width: `${progress}%` }">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <x-input-error for="file" class="mt-2" />
             </div>
             
         </x-slot>
@@ -288,7 +350,7 @@
 
             <div class="col-span-6 sm:col-span-4 mt-4">
                 <x-label for="description" value="{{ __('Description') }}" />
-                <textarea id="description" type="text" class="mt-1 block w-full" wire:model="state.description"></textarea>
+                <textarea id="description" type="text" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600" rows="3" wire:model="state.description"></textarea>
                 <x-input-error for="description" class="mt-2" />
             </div>
 
@@ -302,7 +364,16 @@
                 <x-label for="competence" value="{{ __('Competence') }}" />
                 <x-input id="competence" type="text" class="mt-1 block w-full" wire:model="state.competence" />
                 <x-input-error for="competence" class="mt-2" />
-
+                @if(isset($state['competence']))
+                <div class="mt-2">
+                    @foreach (explode(',', $state['competence']) as $value)
+                        <span class="mt-1 inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-800/30 dark:text-blue-500">
+                            <span class="size-1.5 inline-block rounded-full bg-blue-800 dark:bg-blue-500"></span>
+                            {{ $value }}
+                        </span>
+                    @endforeach
+                </div>
+                @endif
             </div>
 
             <div class="col-span-6 sm:col-span-4 mt-4">
@@ -378,6 +449,90 @@
                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"></path></svg>
                     <p class="ml-2">Ajouter Questions</p>
                 </div>
+            </div>
+            
+            @if(isset($projet->piece_jointe))
+            <span class="flex items-center gap-2 text-sm font-medium text-gray-900 dark:text-white pb-2">
+                <button type="button" class="flex items-center gap-x-2 text-gray-500 hover:text-blue-600 whitespace-nowrap dark:text-neutral-500 dark:hover:text-blue-500">
+                    <svg class="flex-shrink-0 w-[18px] h-[18px] text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                        <path fill-rule="evenodd" d="M13 11.15V4a1 1 0 1 0-2 0v7.15L8.78 8.374a1 1 0 1 0-1.56 1.25l4 5a1 1 0 0 0 1.56 0l4-5a1 1 0 1 0-1.56-1.25L13 11.15Z" clip-rule="evenodd"/>
+                        <path fill-rule="evenodd" d="M9.657 15.874 7.358 13H5a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-2.358l-2.3 2.874a3 3 0 0 1-4.685 0ZM17 16a1 1 0 1 0 0 2h.01a1 1 0 1 0 0-2H17Z" clip-rule="evenodd"/>
+                    </svg>                                 
+                    <a href="#" wire:click.prevent="telechargerFichier('{{ $projet->piece_jointe }}')">
+                        {{ basename($projet->piece_jointe) }}
+                    </a>
+                </button>
+                ({{ formatBytes(Storage::size($projet->piece_jointe)) }})
+            </span>
+            @endif
+
+            <div class="col-span-6 sm:col-span-4 mt-4">
+                <x-label for="edit-file" value="{{ __('Pièces jointes') }}" />
+                <div
+                    x-data="{ isUploading: false, progress: 0 }"
+                    x-on:livewire-upload-start="isUploading = true"
+                    x-on:livewire-upload-finish="isUploading = true; progress = 0;"
+                    x-on:livewire-upload-progress="progress = $event.detail.progress"
+                    x-on:livewire-upload-cancel="isUploading = false; progress = 0;"
+                    @dragover.prevent
+                    @drop.prevent="isUploading = true; $refs.fileInput.files = $event.dataTransfer.files; $refs.fileInput.dispatchEvent(new Event('change'));"
+                >
+                    <label class="group p-4 mt-3 sm:p-7 block cursor-pointer text-center border-2 border-dashed border-gray-200 rounded-lg focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 dark:border-neutral-700">
+                        <input id="edit-file" name="file" type="file" wire:model="file" class="sr-only">
+                        <svg class="size-10 mx-auto text-gray-400 dark:text-neutral-600" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M7.646 5.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708l2-2z"/>
+                            <path d="M4.406 3.342A5.53 5.53 0 0 1 8 2c2.69 0 4.923 2 5.166 4.579C14.758 6.804 16 8.137 16 9.773 16 11.569 14.502 13 12.687 13H3.781C1.708 13 0 11.366 0 9.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383zm.653.757c-.757.653-1.153 1.44-1.153 2.056v.448l-.445.049C2.064 6.805 1 7.952 1 9.318 1 10.785 2.23 12 3.781 12h8.906C13.98 12 15 10.988 15 9.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 4.825 10.328 3 8 3a4.53 4.53 0 0 0-2.941 1.1z"/>
+                        </svg>
+                        <span class="mt-2 block text-sm text-gray-800 dark:text-neutral-200">
+                            Parcourir votre appareil <span class="group-hover:text-blue-700 text-blue-600">Faire glisser-déposer</span>
+                        </span>
+                        <span class="mt-1 block text-xs text-gray-500 dark:text-neutral-500">
+                            Taille maximale du fichier est de 2 MB
+                        </span>
+                    </label>
+                    <div x-show="isUploading">
+                        <div class="mb-2 flex justify-between items-center">
+                            <div class="flex items-center mt-3 gap-x-3">
+                                <span class="size-8 flex justify-center items-center border border-gray-200 text-gray-500 rounded-lg dark:border-neutral-700 dark:text-neutral-500">
+                                    <svg class="flex-shrink-0 size-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="17 8 12 3 7 8"></polyline>
+                                    <line x1="12" x2="12" y1="3" y2="15"></line>
+                                    </svg>
+                                </span>
+                                <div>
+                                    @if ($file)
+                                    <p class="text-sm font-medium text-gray-800 dark:text-white">{{ $file->getClientOriginalName() }}</p>
+                                    <p class="text-xs text-gray-500 dark:text-neutral-500">{{ formatBytes($file->getSize()) }}</p>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="inline-flex items-center gap-x-2">
+                                @if($file && $file->getSize() > 0)
+                                <svg class="flex-shrink-0 size-4 text-teal-500" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"></path>
+                                </svg>
+                                @else
+                                <a wire:click="$cancelUpload('file')" class="text-gray-500 hover:text-gray-800 dark:text-neutral-500 dark:hover:text-neutral-200" href="#">
+                                    <svg class="flex-shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M3 6h18"></path>
+                                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                                    <line x1="10" x2="10" y1="11" y2="17"></line>
+                                    <line x1="14" x2="14" y1="11" y2="17"></line>
+                                    </svg>
+                                </a>
+                                <span class="text-sm text-gray-800 dark:text-white" x-text="progress"></span>%
+                                @endif
+                            </div>
+                        </div>
+                        <div class="flex w-full h-2 bg-gray-200 rounded-full overflow-hidden dark:bg-neutral-700" role="progressbar" aria-valuenow="1" aria-valuemin="0" aria-valuemax="100">
+                            <div class="flex flex-col justify-center rounded-full overflow-hidden bg-blue-600 text-xs text-white text-center whitespace-nowrap transition duration-500 dark:bg-blue-500" :style="{ width: `${progress}%` }">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <x-input-error for="file" class="mt-2" />
             </div>
         
         </x-slot>
