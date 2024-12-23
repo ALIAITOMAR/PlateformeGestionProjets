@@ -159,6 +159,18 @@ class ClasseManager extends Component
     }
 
     /**
+     * Update the Livraison Classe.
+     *
+     * @return void
+     */
+    public function toggleLivraisonActive($classeId)
+    {
+        $classe = Classe::findOrFail($classeId);
+        $classe->livraison_active = !$classe->livraison_active;
+        $classe->save();
+    }
+
+    /**
      * Confirm that the given API token should be deleted.
      *
      * @param  int  $classeId

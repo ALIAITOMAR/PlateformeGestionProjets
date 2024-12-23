@@ -372,11 +372,13 @@ class ProjetManager extends Component
     public function render()
     {
         $projets = auth()->user()->enseignants->projets()
-        ->where('titre', 'like', '%'.$this->search.'%')
-        ->orWhere('description', 'like', '%'.$this->search.'%')
-        ->orWhere('module', 'like', '%'.$this->search.'%')
-        ->orWhere('competence', 'like', '%'.$this->search.'%')
-        ->orderBy('id','ASC')
+        ->where(function ($query) {
+            $query->where('titre', 'like', '%' . $this->search . '%')
+                ->orWhere('description', 'like', '%' . $this->search . '%')
+                ->orWhere('module', 'like', '%' . $this->search . '%')
+                ->orWhere('competence', 'like', '%' . $this->search . '%');
+        })
+        ->orderBy('id', 'ASC')
         ->paginate(5);
 
         return view('livewire.enseignant.projet-manager', ['projets' => $projets]);

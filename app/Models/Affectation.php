@@ -21,7 +21,6 @@ class Affectation extends Model
         'date_echeance',
     ];
 
-    
     public function classe()
     {
         return $this->belongsTo(Classe::class);
@@ -35,5 +34,10 @@ class Affectation extends Model
     public function livrable()
     {
         return $this->hasOne(Livrable::class);
+    }
+
+    public function commentaires()
+    {
+        return $this->hasMany(Commentaire::class);
     }
 }

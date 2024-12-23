@@ -21,6 +21,9 @@ class ApprenantManager extends Component
     public $search = '';
 
     public $apprenantId;
+
+    public $userId;
+
     /**
      * The apprenant instance.
      *
@@ -78,7 +81,8 @@ class ApprenantManager extends Component
 
         //$this->classes = Classe::with('enseignant')->get();
       
-        $this->apprenant = Apprenant::all();
+        //$this->apprenant = Apprenant::all();
+
     }
 
     /**
@@ -188,13 +192,16 @@ class ApprenantManager extends Component
     {   
         //$user = User::findOrFail($this->state['user_id']);
 
+        $apprenant = Apprenant::findOrFail($this->state['id']);
+
+
         Validator::make($this->state, [
             'nom' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/'],
             'prenom' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/'],
-            'email' => ['required', 'email', 'max:255', 'unique:users,email,'.Auth::user()->enseignants->apprenants()->value('user_id')],
-            'password' => ['string', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]+$/'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email,'.$apprenant->user->id],
+            'password' => ['nullable', 'string', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]+$/'],
             'niveau' => ['required', 'string', 'max:255'],
-            'cne' => ['required', 'string', 'max:255', 'unique:apprenants,cne,'.Auth::user()->enseignants->apprenants()->value('user_id')],
+            'cne' => ['required', 'string', 'max:255', 'unique:apprenants,cne,'.$apprenant->id],
             'date_naissance' => ['required', 'string', 'max:255'],
             'classe' => ['required'],
         ])->validate();
@@ -202,7 +209,7 @@ class ApprenantManager extends Component
         
         if ($this->state['id']) {
             
-            $apprenant = Apprenant::findOrFail($this->state['id']);
+            
 
             // Mettre à jour les champs User
             $apprenant->user->nom = $this->state['nom'];
@@ -224,9 +231,9 @@ class ApprenantManager extends Component
                 $apprenant->user->save();
                 $apprenant->save();
                 session()->flash('message', 'Apprenant a été modifié avec succès.');
-                $this->confirmingApprenantUpdate = false;
-                $this->reset('state');
             }
+            $this->confirmingApprenantUpdate = false;
+            $this->reset('state');
         }
     }
 
@@ -265,19 +272,21 @@ class ApprenantManager extends Component
     public function render()
     {
         $apprenants = auth()->user()->enseignants->apprenants()
-        ->with(['user'])
-        ->whereHas('user', function ($query) {
-            $query->where('nom', 'like', '%' . $this->search . '%')
-                  ->orWhere('prenom', 'like', '%' . $this->search . '%')
-                  ->orWhere('email', 'like', '%' . $this->search . '%');
-        })
-        ->orWhereHas('classe', function ($query) {
-            $query->where('nom', 'like', '%' . $this->search . '%');
-        })
-        ->orWhere('cne', 'like', '%'.$this->search.'%')
-        ->orWhere('niveau', 'like', '%'.$this->search.'%')
-        ->orderBy('id', 'ASC')
-        ->paginate(5);
+            ->with('user', 'classe') // Eager load relationships
+            ->where(function ($query) {
+                $query->whereHas('user', function ($query) {
+                        $query->where('nom', 'like', '%' . $this->search . '%')
+                            ->orWhere('prenom', 'like', '%' . $this->search . '%')
+                            ->orWhere('email', 'like', '%' . $this->search . '%');
+                    })
+                    ->orWhereHas('classe', function ($query) {
+                        $query->where('nom', 'like', '%' . $this->search . '%');
+                    })
+                    ->orWhere('cne', 'like', '%' . $this->search . '%')
+                    ->orWhere('niveau', 'like', '%' . $this->search . '%');
+            })
+            ->orderBy('id', 'ASC')
+            ->paginate(5);
 
         return view('livewire.enseignant.apprenant-manager', ['apprenants' => $apprenants]);
     }

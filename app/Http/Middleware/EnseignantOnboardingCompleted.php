@@ -5,8 +5,10 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use App\Models\Enseignant;
+use Illuminate\Support\Facades\Auth;
 
-class CompletedRegistration
+class EnseignantOnboardingCompleted
 {
     /**
      * Handle an incoming request.
@@ -15,9 +17,8 @@ class CompletedRegistration
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Vérifiez si l'enseignant a terminé son inscription
-        if (! $request->user()->hasCompletedRegistration()) {
-            return redirect()->route('complete.enseignant.profile');
+        if (! $request->user()->hasCompletedRegistration() && $request->user()->isEnseignant()) {
+            return redirect()->route('enseignant.onboarding');
         }
 
         return $next($request);

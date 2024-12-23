@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Livewire\EnseignantForm;
 use App\Livewire\Apprenant\ProjetDetails;
+use App\Http\Livewire\Enseignant\LivrableManager;
 
 Route::get('/', function () {
     return view('welcome');
@@ -11,7 +12,7 @@ Route::get('/', function () {
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
-    'verified',
+    'verified', 'enseignant.onboarding.completed',
 ])->group(function () {
     Route::get('/dashboard', function () {
         return view('dashboard');
@@ -32,7 +33,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
 });
 
 // Route group for enseignant
-Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified', 'role:enseignant', 'completed_registration'])->prefix('enseignant')->group(function () {
+Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified', 'role:enseignant', 'enseignant.onboarding.completed'])->prefix('enseignant')->group(function () {
     
     Route::get('/projets', function () {
         return view('projets');
@@ -53,6 +54,14 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
     Route::get('/livrables', function () {
         return view('livrables');
     })->name('enseignant.livrables');
+
+    /*Route::get('/livrable/{id?}', function ($id) {
+        return view('livrables', ['id' => $id]);
+    })->name('enseignant.livrables');*/
+
+    Route::get('/projet/{userId}/{id}-{titre}', function ($userId, $projetId) {
+        return view('projet-details', ['userId' => $userId, 'projetId' => $projetId]);
+    })->name('enseignant.projet-details');
 
 });
 
@@ -81,9 +90,6 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
 });
 
 
-// Route for completing the enseignant profile
-Route::middleware(['auth:sanctum', 'verified', 'role:enseignant', 'completed_registration'])->group(function () {
-    Route::get('/complete-enseignant-profile', function () {
-        return view('complete-enseignant-profile-form');
-    })->name('complete.enseignant.profile');
-});
+Route::get('/enseignant/onboarding', function () {
+    return view('enseignant-onboarding');
+})->name('enseignant.onboarding');

@@ -27,6 +27,11 @@ class Apprenant extends Model
         return $this->belongsTo(User::class,'user_id','id');
     }
 
+    /*public function enseignant()
+    {
+        return $this->belongsTo(Enseignant::class);
+    }*/
+
     public function getFullNameAttribute()
     {
         return $this->user->nom . ' ' . $this->user->prenom;
@@ -36,4 +41,10 @@ class Apprenant extends Model
     {
         return $this->belongsTo(Classe::class);
     }
+
+    public function livrables()
+    {
+        return $this->hasMany(Livrable::class);
+    }
+    
 }

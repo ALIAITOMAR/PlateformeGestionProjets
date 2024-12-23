@@ -92,4 +92,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Commentaire::class);
     }
+
+    public function isEnseignant()
+    {
+        return $this->role === 'enseignant';
+    }
+    
 }

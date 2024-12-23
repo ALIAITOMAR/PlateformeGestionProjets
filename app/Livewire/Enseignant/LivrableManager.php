@@ -38,25 +38,32 @@ class LivrableManager extends Component
     public $state = [];
 
     /**
-     * Indicates if livrable update is being confirmed.
+     * Indicates if livrable approval is being confirmed.
      *
      * @var bool
      */
-    public $confirmingLivrableUpdate = false;
+    public $confirmingLivrableApproval = false;
 
      /**
-     * Indicates if livrable deletion is being confirmed.
+     * Indicates if livrable rejection is being confirmed.
      *
      * @var bool
      */
-    public $confirmingLivrableDeletion = false;
+    public $confirmingLivrableRejection = false;    
 
      /**
-     * The ID of the livrable being deleted.
+     * The ID of the livrable being approved.
      *
      * @var int
      */
-    public $livrableIdBeingDeleted;
+    public $livrableIdBeingApproved;
+
+     /**
+     * The ID of the livrable being rejected.
+     *
+     * @var int
+     */
+    public $livrableIdBeingRejected;
 
     /**
      * Mount the component.
@@ -67,29 +74,6 @@ class LivrableManager extends Component
     {
         Auth::check() ? : abort(404);
         $this->livrable = Livrable::all();
-    }
-
-    /**
-     * Confirm that the given Livrable should be updated.
-     *
-     * @param  int  $livrableId
-     * @return void
-     */
-    public function confirmLivrableEdit($livrableId)
-    {
-        $this->resetErrorBag();
-
-        $livrable = Livrable::find($livrableId);
-        
-        $this->state = [
-            'id' => $livrable->id,
-            'note_produit' => $livrable->note_produit,
-            'note_propos' => $livrable->note_propos,
-            'note_processus' => $livrable->note_processus,
-            'description' => $livrable->description,
-        ];
-
-        $this->confirmingLivrableUpdate = true;
     }
     
     /**
@@ -123,30 +107,56 @@ class LivrableManager extends Component
         }
     }
 
-    /**
-     * Confirm that the given API token should be deleted.
+        /**
+     * Confirm that the given livrable should be approved.
      *
      * @param  int  $livrableId
      * @return void
      */
-    public function confirmLivrableDeletion($livrableId)
+    public function confirmLivrableApproval($livrableId)
     {
-        $this->confirmingLivrableDeletion = true;
+        $this->confirmingLivrableApproval = true;
 
-        $this->livrableIdBeingDeleted = $livrableId;
+        $this->livrableIdBeingApproved = $livrableId;
     }
 
     /**
-     * Delete the Livrable.
+     * Confirm that the given livrable should be rejected.
+     *
+     * @param  int  $livrableId
+     * @return void
+     */
+    public function confirmLivrableRejection($livrableId)
+    {
+        $this->confirmingLivrableRejection = true;
+
+        $this->livrableIdBeingRejected = $livrableId;
+    }
+
+    /**
+     * Approve the Livrable.
      *
      * @return void
      */
-    public function deleteLivrable()
+    public function approveLivrable()
     {
-        $livrable = Livrable::findOrFail($this->livrableIdBeingDeleted);
-        $livrable->delete();
-        $this->confirmingLivrableDeletion = false;
-        session()->flash('message', 'Livrable a été supprimé avec succès.');
+        $livrable = Livrable::findOrFail($this->livrableIdBeingApproved);
+        $livrable->update(['etat' => 'Approuvé']);
+        $this->confirmingLivrableApproval = false;
+        session()->flash('message', 'Livrable a été Approuvé avec succès.');
+    }
+
+    /**
+     * Reject the Livrable.
+     *
+     * @return void
+     */
+    public function rejectLivrable()
+    {
+        $livrable = Livrable::findOrFail($this->livrableIdBeingRejected);
+        $livrable->update(['etat' => 'Rejeté']);
+        $this->confirmingLivrableRejection = false;
+        session()->flash('message', 'Livrable a été Rejeté avec succès.');
     }
 
     public function updatingSearch()
@@ -167,7 +177,31 @@ class LivrableManager extends Component
     
     public function render()
     {
-        $livrables = Livrable::with(['affectation.projet'])
+        
+
+        $livrables = Livrable::whereHas('affectation.projet', function ($query) {
+            $query->where('enseignant_id', auth()->user()->enseignants->id);
+        })
+        ->whereIn('etat', ['Rendu', 'Rendu en retard'])
+        ->where(function ($query) {
+            $query->whereHas('affectation', function ($query) {
+                    $query->whereHas('classe', function ($query) {
+                        $query->where('nom', 'like', '%' . $this->search . '%');
+                    });
+                    $query->orWhereHas('projet', function ($query) {
+                        $query->where('titre', 'like', '%' . $this->search . '%');
+                    });
+                })
+                ->orWhereHas('apprenant.user', function ($query) {
+                    $query->where('nom', 'like', '%' . $this->search . '%')
+                          ->orWhere('prenom', 'like', '%' . $this->search . '%');
+                });
+        })
+        ->latest('created_at')
+        ->paginate(10);
+        
+
+        /*$livrables = Livrable::with(['affectation.projet'])
         ->whereIn('etat', ['Rendu', 'Rendu en retard'])
         ->where(function($query) {
             $query->whereHas('affectation.projet', function($subQuery) {
@@ -175,8 +209,8 @@ class LivrableManager extends Component
             });
         })
         ->latest('created_at')
-        ->paginate(10)
-        ->unique('apprenant_id');
+        ->paginate(5);
+        //->unique('apprenant_id');*/
 
         return view('livewire.enseignant.livrable-manager', ['livrables' => $livrables]);
     }

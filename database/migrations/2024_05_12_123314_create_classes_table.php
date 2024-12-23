@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('classes', function (Blueprint $table) {
             $table->id();
             $table->string('nom');
+            $table->boolean('livraison_active')->default(true);
             $table->unsignedBigInteger('enseignant_id'); // Foreign key column
             $table->foreign('enseignant_id')->references('id')->on('enseignants')->onDelete('cascade');
             $table->timestamps();

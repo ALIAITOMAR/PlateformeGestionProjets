@@ -52,14 +52,15 @@ class CreateNewUser implements CreatesNewUsers
         // Marquer le code comme utilisé
         $invitation->update(['statut' => 'Utilisé']);
 
-        return User::create([
+        User::create([
             'nom' => $input['nom'],
             'prenom' => $input['prenom'],
             'email' => $input['email'],
             'password' => Hash::make($input['password']),
             'role' => 'enseignant',
         ]);
+
+        return redirect()->route('enseignant.onboarding');
         
-        return redirect()->route('complete.enseignant.profile');
     }
 }

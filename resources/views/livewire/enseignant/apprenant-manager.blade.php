@@ -205,7 +205,7 @@
             </div>
 
             {{-- Apprenant input --}}
-            <div class="col-span-6 sm:col-span-4">
+            <div class="col-span-6 sm:col-span-4 mt-4">
                 <x-label for="cne" value="{{ __('CNE') }}" />
                 <x-input id="cne" type="text" class="mt-1 block w-full" wire:model="state.cne" />
                 <x-input-error for="cne" class="mt-2" />

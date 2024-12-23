@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Apprenant;
+namespace App\Livewire\Enseignant;
 
 use Livewire\Component;
 use App\Models\Enseignant;
@@ -22,9 +22,8 @@ use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 
-
 class ProjetDetails extends Component
-{    
+{
     use WithPagination;
 
     use WithFileUploads;
@@ -64,33 +63,27 @@ class ProjetDetails extends Component
      */
     public $confirmingLivrableAdd = false;
 
-    public function mount($id)
+    public $user;
+
+    public function mount($userId, $id)
     {
         $this->projetId = $id;
 
-        $this->livrables = auth()->user()->apprenants->livrables()->with('affectation.projet')->get();
+        $this->user = User::find($userId); 
 
-        $this->affectation = auth()->user()->apprenants->classe->affectations()
+        $this->livrables = $this->user->apprenants->livrables()->with('affectation.projet')->get();
+
+        $this->affectation = $this->user->apprenants->classe->affectations()
             ->with(['projet', 'livrable' => function ($query) {
-                $query->where('apprenant_id', auth()->user()->apprenants->id)->orderBy('created_at', 'desc')->take(1);
+                $query->where('apprenant_id', $this->user->apprenants->id)->orderBy('created_at', 'desc')->take(1);
             }])
             ->where('projet_id', $this->projetId)
             ->firstOrFail();
-                
-        /*$this->commentaires = Commentaire::whereHas('projet', function ($query) {
-                $query->where('id', $this->projetId);
-            })
-            ->whereNull('parent_id')
-            ->whereHas('user.apprenants.classe', function ($query) {
-                $query->where('id', Auth::user()->apprenants->classe->id);
-            })
-            ->latest()
-            ->get();*/
-            
+
             $this->commentaires = Commentaire::whereNull('parent_id')
             ->whereHas('affectation', function ($query) {
                 $query->whereHas('classe', function ($query) {
-                    $query->where('id', Auth::user()->apprenants->classe->id);
+                    $query->where('id', $this->user->apprenants->classe->id);
                 });
             })
             ->latest()
@@ -106,57 +99,6 @@ class ProjetDetails extends Component
         } else {
             session()->flash('error', 'Fichier introuvable.');
         }
-    }
-
-    /**
-     * Confirm that the given Affectation should be added.
-     *
-     * @param  int  $classeId
-     * @return void
-     */
-    public function confirmLivrableAdd()
-    {
-        $this->resetErrorBag();
-        $this->affectation->classe->livraison_active ? $this->confirmingLivrableAdd = true : '';
-        $this->reset('state');
-    }
-
-    /**
-     * Create a new Livrable.
-     *
-     * @return void
-     */
-    public function createLivrable()
-    {
-        $this->isSaving = true;
-
-        sleep(3);
-        
-        Validator::make($this->state, [
-            'description' => ['required', 'string', 'max:255'],
-        ])->validate();
-
-        $this->validate([
-            'file' => ['required', 'file', 'mimes:pdf,xlsx,docx,zip', 'max:2048'],
-        ]);
-
-        $piece_jointe = $this->file ? $this->file->storeAs('livrables/' . auth()->user()->apprenants->cne, $this->file->getClientOriginalName()) : null;        
-        
-        $this->affectation->livrable()->create([
-            'apprenant_id' => auth()->user()->apprenants->id,
-            'piece_jointe' => $piece_jointe,
-            'etat' => Carbon::now()->isAfter($this->affectation->date_echeance) ? 'rendu en retard' : 'rendu',
-            'description' => $this->state['description'],
-        ]);
-
-        session()->flash('message', 'Livrable bien ajouter avec succès.');
-
-        $this->confirmingLivrableAdd = false;
-        
-        $this->reset('state');
-
-        $this->isSaving = false;
-
     }
 
     public function postCommentaire()
@@ -211,6 +153,6 @@ class ProjetDetails extends Component
 
     public function render()
     {
-        return view('livewire.apprenant.projet-details');
+        return view('livewire.enseignant.projet-details');
     }
 }

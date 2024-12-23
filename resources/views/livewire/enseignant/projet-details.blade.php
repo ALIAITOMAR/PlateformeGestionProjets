@@ -213,38 +213,43 @@
 
                                         <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-700 dark:border-gray-600">
                                             
-                                        <span class="absolute top-0 left-0 mt-2 text-xs font-normal text-gray-400 sm:order-last sm:mb-0">
-                                            Version {{ $loop->iteration }}.0
-                                        </span>
+                                            <div class="flex justify-between">
+                                                <span class="mt-2 text-xs font-normal text-gray-400">
+                                                    <span class="mt-2 mr-2 text-xs font-normal text-gray-400 sm:order-last sm:mb-0">
+                                                        @if($livrable->etat === 'Rendu')    
+                                                        <span class="inline-flex items-center gap-1.5 py-0.5 px-2 rounded-full text-xs font-medium bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-green-200">
+                                                            <svg class="size-2.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                                                <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"></path>
+                                                            </svg>
+                                                            {{ $livrable->etat }}
+                                                        </span>
+                                                        @endif
 
-                                        <span class="absolute top-0 right-0 mt-2 mr-2 text-xs font-normal text-gray-400 sm:order-last sm:mb-0">
-                                            @if($livrable->etat === 'Rendu')    
-                                            <span class="inline-flex items-center gap-1.5 py-0.5 px-2 rounded-full text-xs font-medium bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-green-200">
-                                                <svg class="size-2.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                                    <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"></path>
-                                                </svg>
-                                                {{ $livrable->etat }}
-                                            </span>
-                                            @endif
+                                                        @if($livrable->etat === 'Approuvé')    
+                                                        <span class="py-1 px-1.5 inline-flex items-center gap-x-1 text-xs font-medium bg-teal-100 text-teal-800 rounded-full dark:bg-teal-500/10 dark:text-teal-500">
+                                                            <svg class="size-2.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                                                            </svg>
+                                                            {{ $livrable->etat }}
+                                                        </span>
+                                                        @endif
 
-                                            @if($livrable->etat === 'Approuvé')    
-                                            <span class="py-1 px-1.5 inline-flex items-center gap-x-1 text-xs font-medium bg-teal-100 text-teal-800 rounded-full dark:bg-teal-500/10 dark:text-teal-500">
-                                                <svg class="size-2.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
-                                                </svg>
-                                                {{ $livrable->etat }}
-                                            </span>
-                                            @endif
+                                                        @if($livrable->etat === 'Rejeté')    
+                                                        <span class="inline-flex items-center gap-1.5 py-0.5 px-2 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-green-200">
+                                                            <svg class="size-2.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"></path>
+                                                            </svg>
+                                                            {{ $livrable->etat }}
+                                                        </span>
+                                                        @endif
+                                                    </span>
+                                                </span>
 
-                                            @if($livrable->etat === 'Rejeté')    
-                                            <span class="inline-flex items-center gap-1.5 py-0.5 px-2 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-green-200">
-                                                <svg class="size-2.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"></path>
-                                                </svg>
-                                                {{ $livrable->etat }}
-                                            </span>
-                                            @endif
-                                        </span>
+                                                <span class="mt-2 text-xs font-normal text-gray-400">
+                                                    Version {{ $loop->iteration }}.0
+                                                </span>
+                                            </div>
+
                                         
                                             @if($livrable->description)
                                             <div class="mt-4 items-center justify-between sm:flex">
@@ -295,24 +300,20 @@
                                     <!-- End Icon -->
 
                                     <h3 class="mb-2 text-xl font-bold text-gray-800 dark:text-neutral-200">
-                                        PROJET DÉMARRÉ
+                                        PROJET EN COURS
                                     </h3>
                                     <p class="text-gray-500 dark:text-neutral-500">
                                         Le compte à rebours du projet est en cours<br />
-                                        Ne perdez pas votre temps à lire ce message
+                                        Veuillez continuer à suivre les progrès.
                                     </p>
                                 </div>    
                             </div>
                         </div>
 
-                        @if($affectation->classe->livraison_active && $affectation->etat === 'Actif')
+                        @if($affectation->etat === 'Actif')
                         <div class="flex flex-col items-center justify-center">
                                 <x-button type="button" wire:click="confirmLivrableAdd" class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-green-600 bg-green-500 text-white hover:bg-green-700 disabled:opacity-50 disabled:pointer-events-none">
-                                    @if(!$affectation->livrable)
-                                        Livrez maintenant
-                                    @else
-                                        Livrer à nouveau
-                                    @endif
+                                    Marquer comme terminé
                                 </x-button>
                             <div class="mt-4">
                                 <span class="text-gray-500 font-bold">- OU -</span>
@@ -344,15 +345,21 @@
                                             </x-button>
                                         </form>
                                         @endif
+                                        
                                         @foreach($commentaires as $commentaire)
                                         <article class="p-6 text-base bg-white rounded-lg dark:bg-gray-900">
                                             <footer class="flex justify-between items-center mb-2">
                                                 <div class="flex items-center">
-                                                    <p class="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white font-semibold"><img
-                                                            class="mr-2 w-6 h-6 rounded-full"
-                                                            src="{{ $commentaire->user->profile_photo_url }}" alt="{{ $commentaire->user->nom }} {{ $commentaire->user->prenom }}">{{ $commentaire->user->nom }} {{ $commentaire->user->prenom }}</p>
-                                                    <p class="text-sm text-gray-600 dark:text-gray-400"><time pubdate datetime="2022-02-08"
-                                                            title="February 8th, 2022">{{ $commentaire->created_at->format('j F, Y') }}</time></p>
+                                                    <p class="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white font-semibold">
+                                                        <img class="mr-2 w-6 h-6 rounded-full" src="{{ $commentaire->user->profile_photo_url }}" alt="{{ $commentaire->user->nom }} {{ $commentaire->user->prenom }}">
+                                                        {{ $commentaire->user->nom }} {{ $commentaire->user->prenom }} 
+                                                        @if($commentaire->user->hasRole('enseignant'))
+                                                        <span class="ms-1 align-middle inline bg-blue-50 border border-blue-300 text-blue-600 text-[.6125rem] leading-4 uppercase align-middle rounded-full py-0.5 px-2 dark:bg-blue-900/70 dark:border-blue-700 dark:text-blue-500">Enseignant</span>
+                                                        @endif
+                                                    </p>
+                                                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                                                        <time pubdate datetime="2022-02-08"title="February 8th, 2022">{{ $commentaire->created_at->format('j F, Y') }}</time>
+                                                    </p>
                                                 </div>
                                             </footer>
                                             <p class="text-gray-500 dark:text-gray-400">{{ $commentaire->commentaire }}</p>
@@ -394,7 +401,6 @@
                                             </div>
                                         </article>
 
-                                        
                                         <div x-data="{ showAllReplies: false }">
                                             @if ($commentaire->replies->count() >= 2)
                                                 <button @click="showAllReplies = !showAllReplies">
@@ -414,6 +420,9 @@
                                                                 class="mr-2 w-6 h-6 rounded-full"
                                                                 src="{{ $reply->user->profile_photo_url }}" alt="{{ $reply->user->nom }} {{ $reply->user->prenom }}">
                                                                 {{ $reply->user->nom }} {{ $reply->user->prenom }}
+                                                                @if($reply->user->hasRole('enseignant'))
+                                                                    <span class="ms-1 align-middle inline bg-blue-50 border border-blue-300 text-blue-600 text-[.6125rem] leading-4 uppercase align-middle rounded-full py-0.5 px-2 dark:bg-blue-900/70 dark:border-blue-700 dark:text-blue-500">Enseignant</span>
+                                                                @endif
                                                             </p>
                                                             <p class="text-sm text-gray-600 dark:text-gray-400"><time pubdate datetime="2022-02-12"
                                                                     title="February 12th, 2022">{{ $reply->created_at->format('j F, Y') }}</time></p>
@@ -509,17 +518,11 @@
                                 </template>
 
                             </div>
-                            @if($affectation->classe->livraison_active)
                             <div class="flex items-center justify-center gap-4 border-t border-gray-200 pt-2 dark:border-gray-700">
                                 <x-button type="button"  wire:click="confirmLivrableAdd" class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-green-600 bg-green-500 text-white hover:bg-green-700 disabled:opacity-50 disabled:pointer-events-none">
-                                    @if(!$affectation->livrable || $affectation->livrable->etat === 'Non rendu')
-                                        Livrez maintenant
-                                    @else
-                                        Livrer à nouveau
-                                    @endif
+                                    Marquer comme terminé
                                 </x-button>    
                             </div>
-                            @endif
                         </div>
                     </div>
                     @endif
@@ -581,105 +584,5 @@
             </div>
         </div>
     </section>
-
-    {{-- Modal Section --}}
-    <x-dialog-modal wire:model="confirmingLivrableAdd">
-        <x-slot name="title">
-            {{ __('Livrer le travail terminé') }}
-        </x-slot>
-        <x-slot name="content">
-
-            <div class="col-span-6 sm:col-span-4 mt-4">
-                <x-label for="create-file" value="{{ __('Pièces jointes') }}" />
-                <div
-                    x-data="{ isUploading: false, progress: 0 }"
-                    x-on:livewire-upload-start="isUploading = true"
-                    x-on:livewire-upload-finish="isUploading = true; progress = 0;"
-                    x-on:livewire-upload-progress="progress = $event.detail.progress"
-                    x-on:livewire-upload-cancel="isUploading = false; progress = 0;"
-                    @dragover.prevent
-                    @drop.prevent="isUploading = true; $refs.fileInput.files = $event.dataTransfer.files; $refs.fileInput.dispatchEvent(new Event('change'));"
-                >
-                    <label class="group p-4 mt-3 sm:p-7 block cursor-pointer text-center border-2 border-dashed border-gray-200 rounded-lg focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 dark:border-neutral-700">
-                        <input id="create-file" name="file" type="file" wire:model="file" class="sr-only">
-                        <svg class="size-10 mx-auto text-gray-400 dark:text-neutral-600" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd" d="M7.646 5.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708l2-2z"/>
-                            <path d="M4.406 3.342A5.53 5.53 0 0 1 8 2c2.69 0 4.923 2 5.166 4.579C14.758 6.804 16 8.137 16 9.773 16 11.569 14.502 13 12.687 13H3.781C1.708 13 0 11.366 0 9.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383zm.653.757c-.757.653-1.153 1.44-1.153 2.056v.448l-.445.049C2.064 6.805 1 7.952 1 9.318 1 10.785 2.23 12 3.781 12h8.906C13.98 12 15 10.988 15 9.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 4.825 10.328 3 8 3a4.53 4.53 0 0 0-2.941 1.1z"/>
-                        </svg>
-                        <span class="mt-2 block text-sm text-gray-800 dark:text-neutral-200">
-                            Parcourir votre appareil <span class="group-hover:text-blue-700 text-blue-600">Faire glisser-déposer</span>
-                        </span>
-                        <span class="mt-1 block text-xs text-gray-500 dark:text-neutral-500">
-                            Taille maximale du fichier est de 2 MB
-                        </span>
-                    </label>
-                    <div x-show="isUploading">
-                        <div class="mb-2 flex justify-between items-center">
-                            <div class="flex items-center mt-3 gap-x-3">
-                                <span class="size-8 flex justify-center items-center border border-gray-200 text-gray-500 rounded-lg dark:border-neutral-700 dark:text-neutral-500">
-                                    <svg class="flex-shrink-0 size-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                    <polyline points="17 8 12 3 7 8"></polyline>
-                                    <line x1="12" x2="12" y1="3" y2="15"></line>
-                                    </svg>
-                                </span>
-                                <div>
-                                    @if ($file)
-                                    <p class="text-sm font-medium text-gray-800 dark:text-white">{{ $file->getClientOriginalName() }}</p>
-                                    <p class="text-xs text-gray-500 dark:text-neutral-500">{{ formatBytes($file->getSize()) }}</p>
-                                    @endif
-                                </div>
-                            </div>
-                            <div class="inline-flex items-center gap-x-2">
-                                @if($file && $file->getSize() > 0)
-                                <svg class="flex-shrink-0 size-4 text-teal-500" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"></path>
-                                </svg>
-                                @else
-                                <a wire:click="$cancelUpload('file')" class="text-gray-500 hover:text-gray-800 dark:text-neutral-500 dark:hover:text-neutral-200" href="#">
-                                    <svg class="flex-shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M3 6h18"></path>
-                                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                                    <line x1="10" x2="10" y1="11" y2="17"></line>
-                                    <line x1="14" x2="14" y1="11" y2="17"></line>
-                                    </svg>
-                                </a>
-                                <span class="text-sm text-gray-800 dark:text-white" x-text="progress"></span>%
-                                @endif
-                            </div>
-                        </div>
-                        <div class="flex w-full h-2 bg-gray-200 rounded-full overflow-hidden dark:bg-neutral-700" role="progressbar" aria-valuenow="1" aria-valuemin="0" aria-valuemax="100">
-                            <div class="flex flex-col justify-center rounded-full overflow-hidden bg-blue-600 text-xs text-white text-center whitespace-nowrap transition duration-500 dark:bg-blue-500" :style="{ width: `${progress}%` }">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <x-input-error for="file" class="mt-2" />
-            </div>
-
-            <div class="col-span-6 sm:col-span-4 mt-4">
-                <x-label for="description" value="{{ __('Description') }}" />
-                <textarea id="description" type="text" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600" rows="3"  wire:model="state.description"></textarea>
-                <x-input-error for="description" class="mt-2" />
-            </div>
-            
-        </x-slot>
-        <x-slot name="footer">
-            <x-secondary-button wire:click="$set('confirmingLivrableAdd', false)" wire:loading.attr="disabled">
-                {{ __('Annuler') }}
-            </x-secondary-button>
-            
-            <x-button class="ml-2" wire:click="createLivrable" wire:loading.attr="disabled">
-                <span wire:loading.remove wire.target="createLivrable">{{ __('Enregistrer') }}</span>
-                <div x-show="isSaving">
-                    <div wire:loading wire:target="createLivrable" class="animate-spin inline-block size-4 border-[3px] border-current border-t-transparent text-white-600 rounded-full dark:text-white-500" role="status" aria-label="loading">
-                        <span class="sr-only">Chargement...</span>
-                    </div>
-                </div>
-            </x-button>
-
-        </x-slot>
-    </x-dialog-modal>
-
+    
 </div>

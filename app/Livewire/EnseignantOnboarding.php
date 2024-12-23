@@ -8,9 +8,9 @@ use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 
-class CompleteEnseignantProfileForm extends Component
+class EnseignantOnboarding extends Component
 {
-        /**
+       /**
      * The component's state.
      *
      * @var array
@@ -24,7 +24,9 @@ class CompleteEnseignantProfileForm extends Component
      */
     public function mount()
     {
-        Auth::check() ? : abort(404);
+        if (Auth::user()->hasCompletedRegistration() || !Auth::user()->isEnseignant()) {
+            return redirect()->route('dashboard');
+        }
     }
 
     public function submit()
@@ -58,6 +60,6 @@ class CompleteEnseignantProfileForm extends Component
 
     public function render()
     {
-        return view('livewire.complete-enseignant-profile-form');
+        return view('livewire.enseignant-onboarding');
     }
 }

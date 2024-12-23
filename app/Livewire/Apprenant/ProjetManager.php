@@ -136,11 +136,19 @@ class ProjetManager extends Component
 
     public function render()
     {
-        $projets = auth()->user()->apprenants->classe->affectations()->with('projet')
-        //->where('titre', 'like', '%'.$this->search.'%')
-        ->orderBy('id', 'ASC')
-        ->paginate(5);
+        $affectations = auth()->user()->apprenants->classe->affectations()
+            ->with('projet')
+            ->where(function ($query) {
+                $query->whereHas('classe', function ($query) {
+                    $query->where('nom', 'like', '%' . $this->search . '%');
+                });
+                $query->orWhereHas('projet', function ($query) {
+                    $query->where('titre', 'like', '%' . $this->search . '%');
+                });
+            })
+            ->orderBy('id', 'ASC')
+            ->paginate(5);
 
-        return view('livewire.apprenant.projet-manager', ['projets' => $projets]);
+        return view('livewire.apprenant.projet-manager', ['affectations' => $affectations]);
     }
 }

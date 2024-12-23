@@ -11,6 +11,7 @@ class Classe extends Model
 
     protected $fillable = [
         'nom',
+        'livraison_active',
     ];
 
     public function apprenants()
