@@ -46,5 +46,10 @@ class Apprenant extends Model
     {
         return $this->hasMany(Livrable::class);
     }
+
+    public function evaluations()
+    {
+        return $this->hasMany(Evaluation::class);
+    }
     
 }

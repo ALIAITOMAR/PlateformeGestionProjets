@@ -21,6 +21,8 @@ return new class extends Migration
             $table->float('note_propos', 8, 2)->nullable();
             $table->float('note_processus', 8, 2)->nullable();
             $table->string('description')->nullable();
+            $table->boolean('complete')->default(false);
+            $table->string('evaluation_jointe')->nullable();
             $table->timestamps();
             $table->foreign('affectation_id')->references('id')->on('affectations')->onDelete('cascade');
             $table->foreign('apprenant_id')->references('id')->on('apprenants')->onDelete('cascade');

@@ -18,4 +18,9 @@ class Critere extends Model
     {
         return $this->belongsTo(Projet::class);
     }
+
+    public function indicateurs()
+    {
+        return $this->hasMany(Indicateur::class);
+    }
 }

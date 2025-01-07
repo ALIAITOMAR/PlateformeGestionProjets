@@ -10,12 +10,17 @@ class Question extends Model
     use HasFactory;
 
     protected $fillable = [
-        'titre',
         'projet_id',
+        'question',
     ];
 
     public function projet()
     {
         return $this->belongsTo(Projet::class);
+    }
+
+    public function reponses()
+    {
+        return $this->hasMany(Reponse::class);
     }
 }

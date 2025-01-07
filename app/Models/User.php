@@ -65,6 +65,12 @@ class User extends Authenticatable
         ];
     }
 
+    public static function create(array $attributes = [])
+    {
+        $user = static::query()->create($attributes);
+        return $user;
+    }
+    
     /*public function userable()
     {
         return $this->morphTo();

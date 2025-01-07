@@ -48,7 +48,7 @@
                     Niveau
                 </th>
                 <th scope="col" class="px-6 py-3">
-                    Classe
+                    Classe / Groupe
                 </th>
                 <th scope="col" class="px-6 py-3">
                     Actions
@@ -152,9 +152,9 @@
                 <x-input-error for="niveau" class="mt-2" />
             </div>
             <div class="col-span-6 sm:col-span-4 mt-4">
-                <x-label for="classe" value="{{ __('Classe') }}" />
+                <x-label for="classe" value="{{ __('Classe / Groupe') }}" />
                 <select id="classe" class="mt-1 block w-full" wire:model="state.classe">
-                    <option value="" selected="selected">-- Classe --</option>   
+                    <option value="" selected="selected">-- Classe / Groupe --</option>   
                     @foreach($classes as $classe)
                         <option value="{{ $classe->id }}">{{ $classe->nom }}</option>
                     @endforeach
@@ -169,7 +169,6 @@
             </x-secondary-button>
 
             <x-button class="ml-2" wire:click="createApprenant" wire:loading.attr="disabled">
-            <svg class="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>    
             {{ __('Enregister') }}
             </x-button>
         </x-slot>
@@ -221,7 +220,7 @@
                 <x-input-error for="niveau" class="mt-2" />
             </div>
             <div class="col-span-6 sm:col-span-4 mt-4">
-                <x-label for="classe" value="{{ __('Classe') }}" />
+                <x-label for="classe" value="{{ __('Classe / Groupe') }}" />
                 <select id="classe" class="mt-1 block w-full" wire:model="state.classe">
                     @foreach($classes as $classe)
                         <option value="{{ $classe->id }}">{{ $classe->nom }}</option>
@@ -237,7 +236,6 @@
                 {{ __('Annuler') }}
             </x-secondary-button>
             <x-button class="ml-2" wire:click="updateApprenant" wire:loading.attr="disabled">
-            <svg class="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>    
             {{ __('Enregistrer') }}
             </x-button>
         </x-slot>

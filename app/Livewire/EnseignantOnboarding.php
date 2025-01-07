@@ -34,7 +34,7 @@ class EnseignantOnboarding extends Component
         sleep(3);
 
         Validator::make($this->state, [
-            'matricule' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z0-9]+$/'],
+            'matricule' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z0-9]+$/','unique:enseignants'],
             'cadre' => ['required', 'string', 'max:255'],
             'date_embauche' => ['required', 'date'],
             'date_affectation' => ['required', 'date'],

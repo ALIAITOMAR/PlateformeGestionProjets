@@ -43,10 +43,10 @@
                     ID
                 </th>
                 <th scope="col" class="px-6 py-3">
-                    Titre Projet
+                    Projet
                 </th>
                 <th scope="col" class="px-6 py-3">
-                    Classe
+                    Classe / Groupe
                 </th>
                 <th scope="col" class="px-6 py-3">
                     Date Echeance
@@ -126,9 +126,9 @@
             </div>
 
             <div class="col-span-6 sm:col-span-4 mt-4">
-                <x-label for="classe_id" value="{{ __('Classe') }}" />
+                <x-label for="classe_id" value="{{ __('Classe / Groupe') }}" />
                 <select id="classe_id" class="mt-1 block w-full" wire:model.lazy="state.classe_id">
-                <option value="" selected="selected">-- Veuillez sélectionner une classe --</option>
+                <option value="" selected="selected">-- Veuillez sélectionner une classe / Groupe --</option>
                     @foreach($classes as $classe)
                         <option value="{{ $classe->id }}">
                             {{ $classe->nom }}
@@ -176,7 +176,7 @@
             </div>
 
             <div class="col-span-6 sm:col-span-4 mt-4">
-                <x-label for="classe_id" value="{{ __('Classe') }}" />
+                <x-label for="classe_id" value="{{ __('Classe / Groupe') }}" />
                 <select id="classe_id" class="mt-1 block w-full" wire:model="state.classe_id">
                     @foreach($affectations->pluck('classe')->unique() as $classe)
                         <option value="{{ $classe->id }}">{{ $classe->nom }}</option>

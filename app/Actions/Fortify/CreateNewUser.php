@@ -52,7 +52,7 @@ class CreateNewUser implements CreatesNewUsers
         // Marquer le code comme utilisé
         $invitation->update(['statut' => 'Utilisé']);
 
-        User::create([
+        return User::create([
             'nom' => $input['nom'],
             'prenom' => $input['prenom'],
             'email' => $input['email'],
@@ -60,7 +60,7 @@ class CreateNewUser implements CreatesNewUsers
             'role' => 'enseignant',
         ]);
 
-        return redirect()->route('enseignant.onboarding');
+        //return redirect()->route('enseignant.onboarding');
         
     }
 }

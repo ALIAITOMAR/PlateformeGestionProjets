@@ -17,6 +17,7 @@ use Livewire\WithPagination;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class LivrableManager extends Component
 {
@@ -119,6 +120,17 @@ class LivrableManager extends Component
         }
     }
 
+    public function telechargerFichier($cheminFichier)
+    {
+        if (Storage::exists($cheminFichier)) {
+            return response()->streamDownload(function () use ($cheminFichier) {
+                echo Storage::get($cheminFichier);
+            }, basename($cheminFichier));
+        } else {
+            session()->flash('error', 'Fichier introuvable.');
+        }
+    }
+
     public function updatingSearch()
     {
         $this->resetPage();
@@ -126,11 +138,28 @@ class LivrableManager extends Component
     
     public function render()
     {
-        $livrables = auth()->user()->apprenants->livrables()
-        ->where('description', 'like', '%'.$this->search.'%')
-        ->orderBy('id','ASC')
-        ->paginate(5);
+        $livrables = Livrable::whereHas('affectation.projet', function ($query) {
+            $query->where('apprenant_id', auth()->user()->apprenants->id);
+        })
+        //->whereIn('etat', ['Rendu', 'Rendu en retard'])
+        ->where(function ($query) {
+            $query->whereHas('affectation', function ($query) {
+                    $query->whereHas('classe', function ($query) {
+                        $query->where('nom', 'like', '%' . $this->search . '%');
+                    });
+                    $query->orWhereHas('projet', function ($query) {
+                        $query->where('titre', 'like', '%' . $this->search . '%');
+                    });
+                })
+                ->orWhereHas('apprenant.user', function ($query) {
+                    $query->where('nom', 'like', '%' . $this->search . '%')
+                          ->orWhere('prenom', 'like', '%' . $this->search . '%');
+                });
+        })
+        ->latest('created_at')
+        ->paginate(10);
 
+        
         return view('livewire.apprenant.livrable-manager', ['livrables' => $livrables]);
     }
 }

@@ -1,0 +1,101 @@
+# docker-compose.yml
+# version: "3.8"
+# services:
+#     # Laravel Application
+#     app:
+#         build:
+#             context: .
+#             dockerfile: Dockerfile
+#         container_name: laravel-app
+#         volumes:
+#             - .:/var/www/html
+#             - ./nginx/default.conf:/etc/nginx/conf.d
+#         ports:
+#             - "80:80"
+#         networks:
+#             - laravel-network
+#         depends_on:
+#             - mysql
+#             - phpmyadmin
+
+#     # MySQL Database
+#     mysql:
+#         image: mysql:8.0
+#         container_name: laravel-mysql
+#         environment:
+#             MYSQL_ROOT_PASSWORD: secret
+#             MYSQL_DATABASE: laravel
+#             MYSQL_USER: laravel
+#             MYSQL_PASSWORD: laravel
+#         volumes:
+#             - mysql-data:/var/lib/mysql
+#         ports:
+#             - "3306:3306"
+#         networks:
+#             - laravel-network
+
+#     # phpMyAdmin
+#     phpmyadmin:
+#         image: phpmyadmin/phpmyadmin
+#         container_name: laravel-phpmyadmin
+#         environment:
+#             PMA_HOST: mysql
+#             PMA_PORT: 3306
+#             MYSQL_ROOT_PASSWORD: secret
+#         ports:
+#             - "8080:80"
+#         networks:
+#             - laravel-network
+#         depends_on:
+#             - mysql
+
+# # Volumes for persistent data
+# volumes:
+#     mysql-data:
+
+# # Network definition
+# networks:
+#     laravel-network:
+#         driver: bridge
+##--------------NEW VERSION OF DOCKER-COMPOSE.YML---------------##
+version: "3.8"
+
+services:
+    ##Database Service
+    database:
+        image: mysql:8.0
+        ports:
+            - 3306:3306
+        environment:
+            - MYSQL_DATABASE=${DB_DATABASE}
+            - MYSQL_USER=${DB_USER}
+            - MYSQL_PASSWORD=${DB_PASSWORD}
+            - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+        volumes:
+            - db-data:/var/lib/mysql
+    ## Redis Service
+    redis:
+        image: redis:alpine
+        command: redis-server --appendonly yes --requirepass "${REDIS_PASSWORD}"
+        ports:
+            - 6379:6379
+    ## Laravel Service
+    laravel-app:
+        build:
+            context: .
+            target: laravel-app
+            args:
+                - APP_ENV=${APP_ENV}
+        environment:
+            - APP_ENV=${APP_ENV}
+            - CONTAINER_ROLE=app
+        working_dir: /var/www
+        volumes:
+            - ./:/var/www
+        ports:
+            - 8000:8000
+        depends_on:
+            - database
+            - redis
+volumes:
+    db-data: ~

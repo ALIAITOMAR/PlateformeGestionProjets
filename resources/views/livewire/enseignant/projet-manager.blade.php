@@ -42,7 +42,7 @@
                     Titre
                 </th>
                 <th scope="col" class="px-6 py-3">
-                    Module
+                    Module / Unité
                 </th>
                 <th scope="col" class="px-6 py-3">
                     Date Creation
@@ -167,7 +167,7 @@
             </div>
 
             <div class="col-span-6 sm:col-span-4 mt-4">
-                <x-label for="module" value="{{ __('Module') }}" />
+                <x-label for="module" value="{{ __('Module / Unité') }}" />
                 <x-input id="module" type="text" class="mt-1 block w-full" wire:model="state.module" />
                 <x-input-error for="module" class="mt-2" />
             </div>
@@ -208,24 +208,51 @@
             <div class="col-span-6 sm:col-span-4 mt-4">
                 <x-label for="" value="{{ __('Liste des Critères') }}" />
                 @if(count($state['criteres']) > 0)
-                    @foreach ($state['criteres'] as $index => $tache)           
-                    <div class="flex items-center mt-3 px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700">
-                
-                        <x-input wire:model="state.criteres.{{ $index }}.libelle"  id="criteres.{{ $index }}.libelle" type="text" class="block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="{{ __('Libelle critère ') . $index+1 }}" />
-                        <x-input-error for="criteres.{{ $index }}.libelle" class="mt-2" />
-                    
-                        <button wire:click="removeCritere({{ $index }})" wire:loading.attr="disabled" class="inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600">
-                            <svg class="w-6 h-6 text-red-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
-                            </svg>
-                            <span class="sr-only">Supprimer Question</span>
-                        </button>
+                    @foreach ($state['criteres'] as $critereIndex => $critere)
+                    <div class="mt-3 px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700">
+
+                        <div class="flex items-center mb-2">
+                            <x-input wire:model="state.criteres.{{ $critereIndex }}.libelle" id="criteres.{{ $critereIndex }}.libelle" type="text" class="block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="{{ __('Libelle critère ') . $critereIndex+1 }}" />
+                            
+                            <button wire:click="removeCritere({{ $index }})" wire:loading.attr="disabled" class="inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600">
+                                <svg class="w-6 h-6 text-red-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
+                                </svg>
+                                <span class="sr-only">Supprimer Critère</span>
+                            </button>
+                        </div>
+                        <div class="mt-0 px-4">
+                            <x-input-error for="criteres.{{ $critereIndex }}.libelle" class="mt-2" />
+                        </div>
+                        <div>
+                            @foreach ($critere['indicateurs'] as $indicateurIndex => $indicateur)
+                            <div class="flex items-center mb-2">
+                                <x-input wire:model="state.criteres.{{ $critereIndex }}.indicateurs.{{ $indicateurIndex }}.libelle" id="indicateurs.{{ $critereIndex }}.{{ $indicateurIndex }}.libelle" type="text" class="block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:focus:border-blue-500" placeholder="{{ __('Indicateur ') . $indicateurIndex+1 }}" />
+                                
+                                <x-input wire:model="state.criteres.{{ $critereIndex }}.indicateurs.{{ $indicateurIndex }}.bareme" id="indicateurs.{{ $critereIndex }}.{{ $indicateurIndex }}.bareme" type="text" class="block mx-4 p-2.5 w-25 text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:focus:border-blue-500" placeholder="{{ __('Barème') }}" />
+                                <button wire:click="removeIndicateur({{ $critereIndex }}, {{ $indicateurIndex }})" wire:loading.attr="disabled" class="inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600">
+                                    <svg class="w-6 h-6 text-red-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
+                                    </svg>
+                                    <span class="sr-only">Supprimer Indicateur</span>
+                                </button>
+                            </div>
+                            <div class="mt-0 px-4">
+                                <x-input-error for="criteres.{{ $critereIndex }}.indicateurs.{{ $indicateurIndex }}.libelle" class="mt-2" />
+                                <x-input-error for="criteres.{{ $critereIndex }}.indicateurs.{{ $indicateurIndex }}.bareme" class="mt-2" />    
+                            </div>
+                            @endforeach
+                            <div wire:click="addIndicateur({{ $critereIndex }})" wire:loading.attr="disabled" class="flex items-center justify-center text-blue-600 text-sm py-2 cursor-pointer">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"></path></svg>
+                                <span class="ml-2">Ajouter Indicateur</span>
+                            </div>
+                        </div>
                     </div>
                     @endforeach
                 @endif
                 <div wire:click="addCritere" wire:loading.attr="disabled" class="flex items-center justify-center text-blue-600 text-sm py-4 w-full cursor-pointer">
                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"></path></svg>
-                    <p class="ml-2">Ajouter Critères</p>
+                    <span class="ml-2">Ajouter Critère</span>
                 </div>
             </div>
 
@@ -235,8 +262,8 @@
                     @foreach ($state['questions'] as $index => $tache)           
                     <div class="flex items-center mt-3 px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700">
                 
-                        <x-input wire:model="state.questions.{{ $index }}.titre" id="questions.{{ $index }}.titre" type="text" class="block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="{{ __('Question ') . $index+1 }}" />
-                        <x-input-error for="questions.{{ $index }}.titre" class="mt-2" />
+                        <x-input wire:model="state.questions.{{ $index }}.question" id="questions.{{ $index }}.question" type="text" class="block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="{{ __('Question ') . $index+1 }}" />
+                        <x-input-error for="questions.{{ $index }}.question" class="mt-2" />
                     
                         <button wire:click="removeQuestion({{ $index }})" wire:loading.attr="disabled" class="inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600">
                             <svg class="w-6 h-6 text-red-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -343,7 +370,7 @@
 
             {{-- Projet input --}}
             <div class="col-span-6 sm:col-span-4">
-                <x-label for="titre" value="{{ __('titre') }}" />
+                <x-label for="titre" value="{{ __('Titre') }}" />
                 <x-input id="titre" type="text" class="mt-1 block w-full" wire:model="state.titre" />
                 <x-input-error for="titre" class="mt-2" />
             </div>
@@ -355,13 +382,13 @@
             </div>
 
             <div class="col-span-6 sm:col-span-4 mt-4">
-                <x-label for="module" value="{{ __('Module') }}" />
+                <x-label for="module" value="{{ __('Module / Unité') }}" />
                 <x-input id="module" type="text" class="mt-1 block w-full" wire:model="state.module" />
                 <x-input-error for="module" class="mt-2" />
             </div>
 
             <div class="col-span-6 sm:col-span-4 mt-4">
-                <x-label for="competence" value="{{ __('Competence') }}" />
+                <x-label for="competence" value="{{ __('Competences') }}" />
                 <x-input id="competence" type="text" class="mt-1 block w-full" wire:model="state.competence" />
                 <x-input-error for="competence" class="mt-2" />
                 @if(isset($state['competence']))
@@ -406,24 +433,51 @@
             <div class="col-span-6 sm:col-span-4 mt-4">
                 <x-label for="" value="{{ __('Liste des Critères') }}" />
                 @if(count($state['criteres']) > 0)
-                    @foreach ($state['criteres'] as $index => $tache)           
-                    <div class="flex items-center mt-3 px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700">
-                
-                        <x-input wire:model="state.criteres.{{ $index }}.libelle"  id="criteres.{{ $index }}.libelle" type="text" class="block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="{{ __('Libelle critère ') . $index+1 }}" />
-                        <x-input-error for="criteres.{{ $index }}.libelle" class="mt-2" />
-                    
-                        <button wire:click="removeCritere({{ $index }})" wire:loading.attr="disabled" class="inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600">
-                            <svg class="w-6 h-6 text-red-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
-                            </svg>
-                            <span class="sr-only">Supprimer Question</span>
-                        </button>
+                    @foreach ($state['criteres'] as $critereIndex => $critere)
+                    <div class="mt-3 px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700">
+
+                        <div class="flex items-center mb-2">
+                            <x-input wire:model="state.criteres.{{ $critereIndex }}.libelle" id="criteres.{{ $critereIndex }}.libelle" type="text" class="block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="{{ __('Libelle critère ') . $critereIndex+1 }}" />
+                            
+                            <button wire:click="removeCritere({{ $index }})" wire:loading.attr="disabled" class="inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600">
+                                <svg class="w-6 h-6 text-red-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
+                                </svg>
+                                <span class="sr-only">Supprimer Critère</span>
+                            </button>
+                        </div>
+                        <div class="mt-0 px-4">
+                            <x-input-error for="criteres.{{ $critereIndex }}.libelle" class="mt-2" />
+                        </div>
+                        <div>
+                            @foreach ($critere['indicateurs'] as $indicateurIndex => $indicateur)
+                            <div class="flex items-center mb-2">
+                                <x-input wire:model="state.criteres.{{ $critereIndex }}.indicateurs.{{ $indicateurIndex }}.libelle" id="indicateurs.{{ $critereIndex }}.{{ $indicateurIndex }}.libelle" type="text" class="block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:focus:border-blue-500" placeholder="{{ __('Indicateur ') . $indicateurIndex+1 }}" />
+                                
+                                <x-input wire:model="state.criteres.{{ $critereIndex }}.indicateurs.{{ $indicateurIndex }}.bareme" id="indicateurs.{{ $critereIndex }}.{{ $indicateurIndex }}.bareme" type="text" class="block mx-4 p-2.5 w-25 text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:focus:border-blue-500" placeholder="{{ __('Barème') }}" />
+                                <button wire:click="removeIndicateur({{ $critereIndex }}, {{ $indicateurIndex }})" wire:loading.attr="disabled" class="inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600">
+                                    <svg class="w-6 h-6 text-red-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
+                                    </svg>
+                                    <span class="sr-only">Supprimer Indicateur</span>
+                                </button>
+                            </div>
+                            <div class="mt-0 px-4">
+                                <x-input-error for="criteres.{{ $critereIndex }}.indicateurs.{{ $indicateurIndex }}.libelle" class="mt-2" />
+                                <x-input-error for="criteres.{{ $critereIndex }}.indicateurs.{{ $indicateurIndex }}.bareme" class="mt-2" />    
+                            </div>
+                            @endforeach
+                            <div wire:click="addIndicateur({{ $critereIndex }})" wire:loading.attr="disabled" class="flex items-center justify-center text-blue-600 text-sm py-2 cursor-pointer">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"></path></svg>
+                                <span class="ml-2">Ajouter Indicateur</span>
+                            </div>
+                        </div>
                     </div>
                     @endforeach
                 @endif
                 <div wire:click="addCritere" wire:loading.attr="disabled" class="flex items-center justify-center text-blue-600 text-sm py-4 w-full cursor-pointer">
                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"></path></svg>
-                    <p class="ml-2">Ajouter Critères</p>
+                    <span class="ml-2">Ajouter Critère</span>
                 </div>
             </div>
 
@@ -433,8 +487,8 @@
                     @foreach ($state['questions'] as $index => $tache)           
                     <div class="flex items-center mt-3 px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700">
                 
-                        <x-input wire:model="state.questions.{{ $index }}.titre" id="questions.{{ $index }}.titre" type="text" class="block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="{{ __('Question ') . $index+1 }}" />
-                        <x-input-error for="questions.{{ $index }}.titre" class="mt-2" />
+                        <x-input wire:model="state.questions.{{ $index }}.question" id="questions.{{ $index }}.question" type="text" class="block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="{{ __('Question ') . $index+1 }}" />
+                        <x-input-error for="questions.{{ $index }}.question" class="mt-2" />
                     
                         <button wire:click="removeQuestion({{ $index }})" wire:loading.attr="disabled" class="inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600">
                             <svg class="w-6 h-6 text-red-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">

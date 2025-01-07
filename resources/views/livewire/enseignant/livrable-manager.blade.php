@@ -36,7 +36,7 @@
                     ID
                 </th>
                 <th scope="col" class="px-6 py-3">
-                    Classe
+                    Classe / Groupe
                 </th>
                 <th scope="col" class="px-6 py-3">
                     Apprenant
@@ -109,29 +109,6 @@
                 </td>
             
                 <td class="px-6 py-4">
-                    {{-- Download Button Action --}}
-                    <x-button wire:click.prevent="telechargerFichier('{{ $livrable->piece_jointe }}')" class="mr-2 bg-blue-500 hover:bg-blue-700">
-                        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-5 h-5">
-                            <path fill-rule="evenodd" d="M13 11.15V4a1 1 0 1 0-2 0v7.15L8.78 8.374a1 1 0 1 0-1.56 1.25l4 5a1 1 0 0 0 1.56 0l4-5a1 1 0 1 0-1.56-1.25L13 11.15Z" clip-rule="evenodd"/>
-                            <path fill-rule="evenodd" d="M9.657 15.874 7.358 13H5a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-2.358l-2.3 2.874a3 3 0 0 1-4.685 0ZM17 16a1 1 0 1 0 0 2h.01a1 1 0 1 0 0-2H17Z" clip-rule="evenodd"/>
-                        </svg>
-                    </x-button>
-                                                    
-                    {{-- Edit Button Action --}}
-                    <x-button wire:click="confirmLivrableApproval({{ $livrable->id }})" wire:loading.attr="disabled" class="mr-2 bg-green-500 hover:bg-green-700">
-                        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"  fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 11.917 9.724 16.5 19 7.5"/>
-                        </svg>
-
-                    </x-button>
-                    
-                    {{-- Delete Button Action --}}
-                    <x-danger-button class="px-2" wire:click="confirmLivrableRejection({{ $livrable->id }})" wire:loading.attr="disabled">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
-                            <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" />
-                        </svg>
-                    </x-danger-button>
-
                     {{-- View Button Action --}}
                     <a href="{{ route('enseignant.projet-details', ['userId' => $livrable->apprenant->user->id, 'id' => $livrable->affectation->projet->id, 'titre' => Str::slug($livrable->affectation->projet->titre)]) }}" class="btn btn-primary">
                         <x-button wire:click="confirmProjetEdit({{ $livrable->affectation->id }})"
@@ -141,7 +118,6 @@
                             </svg>
                         </x-button>
                     </a>
-                    
                 </td>
             </tr>
             @empty
@@ -156,43 +132,5 @@
     <div class="mt-4">
         {{-- $livrables->links() --}}
     </div>
-
-    {{-- Modal Section --}}
-
-    <!-- Approuvé Livrable Confirmation Modal -->
-    <x-confirmation-modal wire:model.live="confirmingLivrableApproval">
-        <x-slot name="title">
-            {{ __('Approuvé Livrable') }}
-        </x-slot>
-        <x-slot name="content">
-            {{ __('Etes-vous sûr de vouloir Approuvé le Livrable ?') }}
-        </x-slot>
-        <x-slot name="footer">
-            <x-secondary-button wire:click="$toggle('confirmingLivrableApproval')" wire:loading.attr="disabled">
-                {{ __('Annuler') }}
-            </x-secondary-button>
-            <x-danger-button class="ml-2" wire:click="approveLivrable" wire:loading.attr="disabled">
-                {{ __('Approuvé') }}
-            </x-danger-button>
-        </x-slot>
-    </x-confirmation-modal>
-    
-    <!-- Rejeté Confirmation Modal -->
-    <x-confirmation-modal wire:model.live="confirmingLivrableRejection">
-        <x-slot name="title">
-            {{ __('Rejeté Livrable') }}
-        </x-slot>
-        <x-slot name="content">
-            {{ __('Etes-vous sûr de vouloir rejeté le Livrable ?') }}
-        </x-slot>
-        <x-slot name="footer">
-            <x-secondary-button wire:click="$toggle('confirmingLivrableRejection')" wire:loading.attr="disabled">
-                {{ __('Annuler') }}
-            </x-secondary-button>
-            <x-danger-button class="ml-2" wire:click="rejectLivrable" wire:loading.attr="disabled">
-                {{ __('Rejeté') }}
-            </x-danger-button>
-        </x-slot>
-    </x-confirmation-modal>
 
 </div>

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('questions', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('projet_id'); // Foreign key column
-            $table->string('titre');
+            $table->string('question');
             $table->timestamps();
             $table->foreign('projet_id')->references('id')->on('projets')->onDelete('cascade');
         });

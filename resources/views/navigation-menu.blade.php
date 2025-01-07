@@ -60,7 +60,7 @@
                                 <x-dropdown-link href="{{ route('enseignant.livrables') }}" :active="request()->routeIs('livrables')">
                                     {{ __('Gestion des livrables') }}
                                 </x-dropdown-link>
-                                <x-dropdown-link href="{{ route('profile.show') }}">
+                                <x-dropdown-link href="{{ route('enseignant.evaluation') }}">
                                     {{ __('Evaluation') }}
                                 </x-dropdown-link>
                             </x-slot>

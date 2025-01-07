@@ -107,7 +107,7 @@ class LivrableManager extends Component
         }
     }
 
-        /**
+    /**
      * Confirm that the given livrable should be approved.
      *
      * @param  int  $livrableId
@@ -177,8 +177,6 @@ class LivrableManager extends Component
     
     public function render()
     {
-        
-
         $livrables = Livrable::whereHas('affectation.projet', function ($query) {
             $query->where('enseignant_id', auth()->user()->enseignants->id);
         })
@@ -198,19 +196,8 @@ class LivrableManager extends Component
                 });
         })
         ->latest('created_at')
-        ->paginate(10);
-        
-
-        /*$livrables = Livrable::with(['affectation.projet'])
-        ->whereIn('etat', ['Rendu', 'Rendu en retard'])
-        ->where(function($query) {
-            $query->whereHas('affectation.projet', function($subQuery) {
-                $subQuery->where('titre', 'like', '%'.$this->search.'%');
-            });
-        })
-        ->latest('created_at')
-        ->paginate(5);
-        //->unique('apprenant_id');*/
+        ->paginate(10)
+        ->unique('apprenant_id');
 
         return view('livewire.enseignant.livrable-manager', ['livrables' => $livrables]);
     }

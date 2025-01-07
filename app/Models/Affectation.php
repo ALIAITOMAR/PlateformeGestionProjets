@@ -40,4 +40,9 @@ class Affectation extends Model
     {
         return $this->hasMany(Commentaire::class);
     }
+
+    public function evaluations()
+    {
+        return $this->hasMany(Evaluation::class);
+    }
 }

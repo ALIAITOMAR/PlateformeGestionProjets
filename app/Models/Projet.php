@@ -47,6 +47,11 @@ class Projet extends Model
         return $this->hasMany(Critere::class);
     }
 
+    /*public function indicateurs()
+    {
+        return $this->hasMany(Indicateur::class);
+    }*/
+
     public function commentaires()
     {
         return $this->hasMany(Commentaire::class);

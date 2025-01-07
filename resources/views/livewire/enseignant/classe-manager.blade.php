@@ -22,7 +22,7 @@
             {{-- Add Button Action --}}
             <div class="relative">
                 <x-button wire:click="confirmClasseAdd" class="bg-indigo-700 hover:bg-indigo-900">
-                    Ajouter Classe
+                    Ajouter Classe / Groupe
                 </x-button>
             </div>
         <label for="table-search" class="sr-only">Search</label>
@@ -32,7 +32,7 @@
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
                 </svg>
             </div>
-            <input type="search" wire:model.live="search" id="table-search-classes" class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Rechercher des classes">
+            <input type="search" wire:model.live="search" id="table-search-classes-groupes" class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Rechercher des Classes / Groupes">
         </div>
     </div>
     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -49,7 +49,7 @@
                 </th>
 
                 <th scope="col" class="px-6 py-3">
-                    Livraison
+                    Autoriser la livraison
                 </th>
 
                 <th scope="col" class="px-6 py-3">
@@ -123,7 +123,7 @@
     {{-- Modal Section --}}
     <x-dialog-modal wire:model="confirmingClasseAdd">
         <x-slot name="title">
-            {{ __('Ajouter Classe') }}
+            {{ __('Ajouter Classe / Groupe') }}
         </x-slot>
         <x-slot name="content">
 
@@ -141,7 +141,6 @@
             </x-secondary-button>
 
             <x-button class="ml-2" wire:click="createClasse" wire:loading.attr="disabled">
-            <svg class="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>    
             {{ __('Enregister') }}
             </x-button>
         </x-slot>
@@ -149,7 +148,7 @@
 
     <x-dialog-modal wire:model="confirmingClasseUpdate">
         <x-slot name="title">
-            {{ __('Modifier Classe') }}
+            {{ __('Modifier Classe / Groupe') }}
         </x-slot>
 
         <x-slot name="content">
@@ -168,7 +167,6 @@
                 {{ __('Annuler') }}
             </x-secondary-button>
             <x-button class="ml-2" wire:click="updateClasse" wire:loading.attr="disabled">
-            <svg class="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>    
             {{ __('Enregistrer') }}
             </x-button>
         </x-slot>
@@ -177,7 +175,7 @@
     <!-- Supprimer Classe Confirmation Modal -->
     <x-confirmation-modal wire:model.live="confirmingClasseDeletion">
         <x-slot name="title">
-            {{ __('Supprimer Classe') }}
+            {{ __('Supprimer Classe / Groupe') }}
         </x-slot>
         <x-slot name="content">
             {{ __('Etes-vous sûr de vouloir supprimer le Classe ?') }}

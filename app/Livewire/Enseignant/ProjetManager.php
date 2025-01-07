@@ -53,9 +53,12 @@ class ProjetManager extends Component
         'questions' => [
             ['titre' => '']
         ],
-        'criteres' => [
+        /*'criteres' => [
             ['libelle' => '']
-        ]
+        ],*/
+        'criteres' => [
+            ['libelle' => '', 'indicateurs' => [['libelle' => '', 'bareme' => '']]],
+        ],
     ];
 
     /**
@@ -120,7 +123,7 @@ class ProjetManager extends Component
 
     public function addQuestion()
     {
-        $this->state['questions'][] = ['titre' => ''];
+        $this->state['questions'][] = ['question' => ''];
     }
 
     public function removeQuestion($index)
@@ -131,13 +134,25 @@ class ProjetManager extends Component
 
     public function addCritere()
     {
-        $this->state['criteres'][] = ['libelle' => ''];
+        //$this->state['criteres'][] = ['libelle' => ''];
+        $this->state['criteres'][] = ['libelle' => '', 'indicateurs' => [['libelle' => '', 'bareme' => '']]];
     }
 
     public function removeCritere($index)
     {
         unset($this->state['criteres'][$index]);
         $this->state['criteres'] = array_values($this->state['criteres']);
+    }
+
+    public function addIndicateur($critereIndex)
+    {
+        $this->state['criteres'][$critereIndex]['indicateurs'][] = ['libelle' => '', 'bareme' => ''];
+    }
+
+    public function removeIndicateur($critereIndex, $indicateurIndex)
+    {
+        unset($this->state['criteres'][$critereIndex]['indicateurs'][$indicateurIndex]);
+        $this->state['criteres'][$critereIndex]['indicateurs'] = array_values($this->state['criteres'][$critereIndex]['indicateurs']);
     }
 
     public function addField($field)
@@ -149,6 +164,18 @@ class ProjetManager extends Component
     {
         unset($this->state[$field][$index]);
         $this->state[$field] = array_values($this->state[$field]);
+    }
+
+    public function messages()
+    {
+        return [
+            'state.criteres.*.libelle.required' => 'Le libelle du critère est requis.',
+            'state.criteres.*.libelle.string' => 'Le libelle du critère doit être une chaîne de caractères.',
+            'state.criteres.*.libelle.max' => 'Le libelle du critère ne doit pas dépasser :max caractères.',
+            'state.criteres.*.indicateurs.*.libelle.required' => 'Le libelle de l\'indicateur est requis.',
+            'state.criteres.*.indicateurs.*.libelle.string' => 'Le libelle de l\'indicateur doit être une chaîne de caractères.',
+            'state.criteres.*.indicateurs.*.libelle.max' => 'Le libelle de l\'indicateur ne doit pas dépasser :max caractères.',
+        ];
     }
 
     /**
@@ -180,11 +207,53 @@ class ProjetManager extends Component
             'taches.*.titre' => ['required', 'string', 'max:255'],
             'taches.*.description' => ['required', 'string', 'max:255'],
             'criteres.*.libelle' => ['required', 'string', 'max:255'],
-            'questions.*.titre' => ['required', 'string', 'max:255'],
+            'questions.*.question' => ['required', 'string', 'max:255'],
+            'criteres.*.indicateurs' => ['required', 'array'],
+            'criteres.*.indicateurs.*.libelle' => ['required', 'string', 'max:255'],
+            'criteres.*.indicateurs.*.bareme' => ['required', 'numeric', 'max:255'],
+        ], [
+            'titre.required' => 'Le titre est requis.',
+            'titre.string' => 'Le titre doit être une chaîne de caractères.',
+            'titre.max' => 'Le titre ne doit pas dépasser :max caractères.',
+            'description.required' => 'La description est requise.',
+            'description.string' => 'La description doit être une chaîne de caractères.',
+            'description.max' => 'La description ne doit pas dépasser :max caractères.',
+            'module.required' => 'Le module est requis.',
+            'module.string' => 'Le module doit être une chaîne de caractères.',
+            'module.max' => 'Le module ne doit pas dépasser :max caractères.',
+            'competence.required' => 'La compétence est requise.',
+            'competence.string' => 'La compétence doit être une chaîne de caractères.',
+            'competence.max' => 'La compétence ne doit pas dépasser :max caractères.',
+            'competence.regex' => 'La compétence doit être au format correct.',
+            'taches.*.titre.required' => 'Le titre de la tâche est requis.',
+            'taches.*.titre.string' => 'Le titre de la tâche doit être une chaîne de caractères.',
+            'taches.*.titre.max' => 'Le titre de la tâche ne doit pas dépasser :max caractères.',
+            'taches.*.description.required' => 'La description de la tâche est requise.',
+            'taches.*.description.string' => 'La description de la tâche doit être une chaîne de caractères.',
+            'taches.*.description.max' => 'La description de la tâche ne doit pas dépasser :max caractères.',
+            'criteres.*.libelle.required' => 'Le libelle du critère est requis.',
+            'criteres.*.libelle.string' => 'Le libelle du critère doit être une chaîne de caractères.',
+            'criteres.*.libelle.max' => 'Le libelle du critère ne doit pas dépasser :max caractères.',
+            'questions.*.question.required' => 'Le titre de la question est requis.',
+            'questions.*.question.string' => 'Le titre de la question doit être une chaîne de caractères.',
+            'questions.*.question.max' => 'Le titre de la question ne doit pas dépasser :max caractères.',
+            'criteres.*.indicateurs.required' => 'Les indicateurs sont requis pour ce critère.',
+            'criteres.*.indicateurs.array' => 'Les indicateurs doivent être sous forme de tableau.',
+            'criteres.*.indicateurs.*.libelle.required' => 'Le libelle de l\'indicateur est requis.',
+            'criteres.*.indicateurs.*.libelle.string' => 'Le libelle de l\'indicateur doit être une chaîne de caractères.',
+            'criteres.*.indicateurs.*.libelle.max' => 'Le libelle de l\'indicateur ne doit pas dépasser :max caractères.',
+            'criteres.*.indicateurs.*.bareme.required' => 'Le barème de l\'indicateur est requis.',
+            'criteres.*.indicateurs.*.bareme.numeric' => 'Le barème de l\'indicateur doit être un nombre.',
+            'criteres.*.indicateurs.*.bareme.max' => 'Le barème de l\'indicateur ne doit pas dépasser :max.',
         ])->validate();
 
         $this->validate([
             'file' => ['nullable', 'file', 'mimes:pdf,xlsx,docx,zip', 'max:2048'],
+        ], [
+            //'file.required' => 'Le fichier est requis.',
+            'file.file' => 'Le champ doit être un fichier.',
+            'file.mimes' => 'Le fichier doit être de type :values.',
+            'file.max' => 'La taille maximale du fichier est :max kilo-octets.',
         ]);
 
         DB::beginTransaction();
@@ -202,8 +271,17 @@ class ProjetManager extends Component
             ]);
             
             $projet->taches()->createMany($this->state['taches']);
-            $projet->criteres()->createMany($this->state['criteres']);
             $projet->questions()->createMany($this->state['questions']);
+
+            $indicateurs = collect($this->state['criteres'])->flatMap(function ($critere) {
+                return $critere['indicateurs'];
+            })->all();
+
+            $projet->criteres()->createMany($this->state['criteres']);
+
+            $projet->criteres()->each(function ($critere) use ($indicateurs) {
+                $critere->indicateurs()->createMany($indicateurs);
+            });
 
             DB::commit();
 
@@ -243,7 +321,11 @@ class ProjetManager extends Component
             'competence' => $projet->competence,
             'piece_jointe' => $projet->piece_jointe,
             'taches' => $projet->taches->toArray(),
-            'criteres' => $projet->criteres->toArray(),
+            'criteres' => $projet->criteres->map(function ($critere) {
+                $critereData = $critere->toArray();
+                $critereData['indicateurs'] = $critere->indicateurs->toArray();
+                return $critereData;
+            })->toArray(),
             'questions' => $projet->questions->toArray(),
         ];
 
@@ -271,11 +353,53 @@ class ProjetManager extends Component
             'taches.*.titre' => ['required', 'string', 'max:255'],
             'taches.*.description' => ['required', 'string', 'max:255'],
             'criteres.*.libelle' => ['required', 'string', 'max:255'],
-            'questions.*.titre' => ['required', 'string', 'max:255'],
+            'questions.*.question' => ['required', 'string', 'max:255'],
+            'criteres.*.indicateurs' => ['required', 'array'],
+            'criteres.*.indicateurs.*.libelle' => ['required', 'string', 'max:255'],
+            'criteres.*.indicateurs.*.bareme' => ['required', 'numeric', 'max:255'],
+        ], [
+            'titre.required' => 'Le titre est requis.',
+            'titre.string' => 'Le titre doit être une chaîne de caractères.',
+            'titre.max' => 'Le titre ne doit pas dépasser :max caractères.',
+            'description.required' => 'La description est requise.',
+            'description.string' => 'La description doit être une chaîne de caractères.',
+            'description.max' => 'La description ne doit pas dépasser :max caractères.',
+            'module.required' => 'Le module est requis.',
+            'module.string' => 'Le module doit être une chaîne de caractères.',
+            'module.max' => 'Le module ne doit pas dépasser :max caractères.',
+            'competence.required' => 'La compétence est requise.',
+            'competence.string' => 'La compétence doit être une chaîne de caractères.',
+            'competence.max' => 'La compétence ne doit pas dépasser :max caractères.',
+            'competence.regex' => 'La compétence doit être au format correct.',
+            'taches.*.titre.required' => 'Le titre de la tâche est requis.',
+            'taches.*.titre.string' => 'Le titre de la tâche doit être une chaîne de caractères.',
+            'taches.*.titre.max' => 'Le titre de la tâche ne doit pas dépasser :max caractères.',
+            'taches.*.description.required' => 'La description de la tâche est requise.',
+            'taches.*.description.string' => 'La description de la tâche doit être une chaîne de caractères.',
+            'taches.*.description.max' => 'La description de la tâche ne doit pas dépasser :max caractères.',
+            'criteres.*.libelle.required' => 'Le libelle du critère est requis.',
+            'criteres.*.libelle.string' => 'Le libelle du critère doit être une chaîne de caractères.',
+            'criteres.*.libelle.max' => 'Le libelle du critère ne doit pas dépasser :max caractères.',
+            'questions.*.question.required' => 'Le titre de la question est requis.',
+            'questions.*.question.string' => 'Le titre de la question doit être une chaîne de caractères.',
+            'questions.*.question.max' => 'Le titre de la question ne doit pas dépasser :max caractères.',
+            'criteres.*.indicateurs.required' => 'Les indicateurs sont requis pour ce critère.',
+            'criteres.*.indicateurs.array' => 'Les indicateurs doivent être sous forme de tableau.',
+            'criteres.*.indicateurs.*.libelle.required' => 'Le libelle de l\'indicateur est requis.',
+            'criteres.*.indicateurs.*.libelle.string' => 'Le libelle de l\'indicateur doit être une chaîne de caractères.',
+            'criteres.*.indicateurs.*.libelle.max' => 'Le libelle de l\'indicateur ne doit pas dépasser :max caractères.',
+            'criteres.*.indicateurs.*.bareme.required' => 'Le barème de l\'indicateur est requis.',
+            'criteres.*.indicateurs.*.bareme.numeric' => 'Le barème de l\'indicateur doit être un nombre.',
+            'criteres.*.indicateurs.*.bareme.max' => 'Le barème de l\'indicateur ne doit pas dépasser :max.',
         ])->validate();
 
         $this->validate([
             'file' => ['nullable', 'file', 'mimes:pdf,xlsx,docx,zip', 'max:2048'],
+        ], [
+            //'file.required' => 'Le fichier est requis.',
+            'file.file' => 'Le champ doit être un fichier.',
+            'file.mimes' => 'Le fichier doit être de type :values.',
+            'file.max' => 'La taille maximale du fichier est :max kilo-octets.',
         ]);
         
         if ($this->state['id']) {
@@ -293,7 +417,7 @@ class ProjetManager extends Component
                 $projet->piece_jointe = $fileName;
             }
             
-            // Mettre à jour les champs Tache
+            // Mettre à jour les champs Tâche
             $tacheIds = collect($this->state['taches'])->pluck('id')->filter()->toArray();
             $projet->taches()->whereNotIn('id', $tacheIds)->delete();
 
@@ -302,11 +426,33 @@ class ProjetManager extends Component
             });
 
             // Mettre à jour les champs Critere
-            $critereIds = collect($this->state['criteres'])->pluck('id')->filter()->toArray();
+            /*$critereIds = collect($this->state['criteres'])->pluck('id')->filter()->toArray();
             $projet->criteres()->whereNotIn('id', $critereIds)->delete();
 
             collect($this->state['criteres'])->each(function ($critere) use ($projet) {
                 $projet->criteres()->updateOrCreate(['id' => $critere['id'] ?? null], $critere);
+            });*/
+
+            // Mettre à jour les champs Critere et Indicateur
+            $critereIds = collect($this->state['criteres'])->pluck('id')->filter()->toArray();
+            $projet->criteres()->whereNotIn('id', $critereIds)->delete();
+
+            collect($this->state['criteres'])->each(function ($critereData) use ($projet) {
+                $critere = $projet->criteres()->updateOrCreate(['id' => $critereData['id'] ?? null], [
+                    'libelle' => $critereData['libelle'],
+                ]);
+
+                if (isset($critereData['indicateurs'])) {
+                    $indicateurIds = collect($critereData['indicateurs'])->pluck('id')->filter()->toArray();
+                    $critere->indicateurs()->whereNotIn('id', $indicateurIds)->delete();
+
+                    collect($critereData['indicateurs'])->each(function ($indicateur) use ($critere) {
+                        $critere->indicateurs()->updateOrCreate(['id' => $indicateur['id'] ?? null], [
+                            'libelle' => $indicateur['libelle'],
+                            'bareme' => $indicateur['bareme'],
+                        ]);
+                    });
+                }
             });
 
             // Mettre à jour les champs Question

@@ -18,6 +18,7 @@ class Livrable extends Model
         'note_propos',
         'note_processus',
         'description',
+        'complete',
     ];
 
     public function apprenant()

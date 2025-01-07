@@ -1,13 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Livewire\EnseignantForm;
-use App\Livewire\Apprenant\ProjetDetails;
-use App\Http\Livewire\Enseignant\LivrableManager;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::redirect('/', '/login');
 
 Route::middleware([
     'auth:sanctum',
@@ -55,9 +50,13 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
         return view('livrables');
     })->name('enseignant.livrables');
 
-    /*Route::get('/livrable/{id?}', function ($id) {
-        return view('livrables', ['id' => $id]);
-    })->name('enseignant.livrables');*/
+    Route::get('/evaluation', function () {
+        return view('evaluation');
+    })->name('enseignant.evaluation');
+
+    Route::get('/indicateurs', function () {
+        return view('indicateurs');
+    })->name('enseignant.indicateurs');
 
     Route::get('/projet/{userId}/{id}-{titre}', function ($userId, $projetId) {
         return view('projet-details', ['userId' => $userId, 'projetId' => $projetId]);
@@ -76,19 +75,11 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
         return view('livrables');
     })->name('apprenant.livrables');
 
-    /*Route::get('/projets/{projetid}', function () {
-        return view('projet-details');
-    })->name('apprenant.projet-details');*/
-
     Route::get('/projets/{id}-{titre}', function ($projetId) {
         return view('projet-details', ['projetId' => $projetId]);
     })->name('apprenant.projet-details');
 
-    //Route::get('/projets/{projetid}', ProjetDetails::class)->name('apprenant.projet-details');
-
-    //Route::get('/projets/{id}', [ProjetDetails::class])->name('apprenant.projet-details');
 });
-
 
 Route::get('/enseignant/onboarding', function () {
     return view('enseignant-onboarding');

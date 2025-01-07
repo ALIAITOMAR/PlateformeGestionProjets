@@ -55,7 +55,9 @@ class ProjetDetails extends Component
      *
      * @var array
      */
-    public $state = [];
+    public $state = [
+        'reponses' => [],
+    ];
 
      /**
      * Indicates if affectation add is being confirmed.
@@ -68,7 +70,13 @@ class ProjetDetails extends Component
     {
         $this->projetId = $id;
 
-        $this->livrables = auth()->user()->apprenants->livrables()->with('affectation.projet')->get();
+      $this->livrables = auth()->user()->apprenants->livrables()->with('affectation.projet')
+        ->whereHas('affectation', function ($query) {
+            $query->whereHas('projet', function ($query) {
+                $query->where('id', $this->projetId);
+            });
+        })
+        ->get();
 
         $this->affectation = auth()->user()->apprenants->classe->affectations()
             ->with(['projet', 'livrable' => function ($query) {
@@ -77,6 +85,7 @@ class ProjetDetails extends Component
             ->where('projet_id', $this->projetId)
             ->firstOrFail();
                 
+            //dd($this->affectation->projet->questions->reponses);
         /*$this->commentaires = Commentaire::whereHas('projet', function ($query) {
                 $query->where('id', $this->projetId);
             })
@@ -207,6 +216,29 @@ class ProjetDetails extends Component
             $commentaire->increment('thumbs_down');
             session()->put('voted_commentaire_' . $commentaireId, true);
         }
+    }
+
+    public function saveReponses()
+    {
+        sleep(3);
+        
+        Validator::make($this->state, [
+            'reponses.*.reponse' => ['required', 'string', 'max:255'],
+        ])->validate();
+
+        foreach ($this->affectation->projet->questions as $question) {
+            $reponse = $question->reponses()->updateOrCreate(
+                [
+                    'apprenant_id' => auth()->user()->apprenants->id,
+                    'question_id' => $question->id,
+                ],
+                [
+                    'reponse' => $this->state['reponses'][$question->id]['reponse'],
+                ]
+            );
+        }
+
+        session()->flash('message', 'Réponses enregistrées avec succès.');
     }
 
     public function render()

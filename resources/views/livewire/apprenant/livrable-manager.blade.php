@@ -36,7 +36,7 @@
                     Projet
                 </th>
                 <th scope="col" class="px-6 py-3">
-                    Classe
+                    Classe / Groupe
                 </th>
                 <th scope="col" class="px-6 py-3">
                     Date Echeance
@@ -55,45 +55,77 @@
             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
             
                 <td class="px-6 py-4">
-                    {{ $livrable->projet->titre }}
+                    {{ $livrable->affectation->projet->titre }}
                 </td>
                 
                 <td class="px-6 py-4">
-                {{ $livrable->classe->nom }}
+                {{ $livrable->affectation->classe->nom }}
                 </td>
 
                 <td class="px-6 py-4">
-                {{ $livrable->date_echeance->format('d/m/Y') }}
+                {{ $livrable->affectation->date_echeance->format('d/m/Y') }}
                 </td>
             
                 <td class="px-6 py-4">
                     <div class="flex flex-col gap-y-2">
                     <div>
-                        ss
-                    </div>
+                        @if($livrable->etat === 'Rendu')    
+                        <span class="inline-flex items-center gap-1.5 py-0.5 px-2 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                            <svg class="flex-shrink-0 size-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" x2="12" y1="2" y2="6"></line>
+                                <line x1="12" x2="12" y1="18" y2="22"></line>
+                                <line x1="4.93" x2="7.76" y1="4.93" y2="7.76"></line>
+                                <line x1="16.24" x2="19.07" y1="16.24" y2="19.07"></line>
+                                <line x1="2" x2="6" y1="12" y2="12"></line>
+                                <line x1="18" x2="22" y1="12" y2="12"></line>
+                                <line x1="4.93" x2="7.76" y1="19.07" y2="16.24"></line>
+                                <line x1="16.24" x2="19.07" y1="7.76" y2="4.93"></line>
+                            </svg>
+                            {{ $livrable->etat }}
+                        </span>
+                        @endif
+
+                        @if($livrable->etat === 'Rendu en retard')    
+                        <span class="inline-flex items-center gap-1.5 py-0.5 px-2 rounded-full text-xs font-medium bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200">
+                            <svg class="size-2.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"></path>
+                            </svg>
+                            {{ $livrable->etat }}
+                        </span>
+                        @endif
+
+                        @if($livrable->etat === 'Approuvé')    
+                        <span class="py-1 px-1.5 inline-flex items-center gap-x-1 text-xs font-medium bg-teal-100 text-teal-800 rounded-full dark:bg-teal-500/10 dark:text-teal-500">
+                            <svg class="size-2.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                            </svg>
+                            {{ $livrable->etat }}
+                        </span>
+                        @endif
+
+                        @if($livrable->etat === 'Rejeté')    
+                        <span class="inline-flex items-center gap-1.5 py-0.5 px-2 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-green-200">
+                            <svg class="size-2.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"></path>
+                            </svg>
+                            {{ $livrable->etat }}
+                        </span>
+                        @endif
+                        </div>
                     </div>
                 </td>
 
                 <td class="px-6 py-4">
-
-                <a href="{{ route('apprenant.projet-details', ['projetid' => $projet->projet->id, 'titre' => Str::slug($projet->projet->titre)]) }}" class="btn btn-primary">View Details</a>
-                
-                    {{-- Edit Button Action --}}
-                    <x-button wire:click="confirmProjetEdit({{ $projet->id }})"
-                        class="mr-2 bg-blue-500 hover:bg-blue-700">
-                        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                            <path fill-rule="evenodd" d="M4.998 7.78C6.729 6.345 9.198 5 12 5c2.802 0 5.27 1.345 7.002 2.78a12.713 12.713 0 0 1 2.096 2.183c.253.344.465.682.618.997.14.286.284.658.284 1.04s-.145.754-.284 1.04a6.6 6.6 0 0 1-.618.997 12.712 12.712 0 0 1-2.096 2.183C17.271 17.655 14.802 19 12 19c-2.802 0-5.27-1.345-7.002-2.78a12.712 12.712 0 0 1-2.096-2.183 6.6 6.6 0 0 1-.618-.997C2.144 12.754 2 12.382 2 12s.145-.754.284-1.04c.153-.315.365-.653.618-.997A12.714 12.714 0 0 1 4.998 7.78ZM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd"/>
+                    @if (Storage::exists($livrable->piece_jointe))
+                    <x-button wire:click.prevent="telechargerFichier('{{ $livrable->piece_jointe }}')" class="mr-2 bg-blue-500 hover:bg-blue-700">
+                        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-5 h-5">
+                            <path fill-rule="evenodd" d="M13 11.15V4a1 1 0 1 0-2 0v7.15L8.78 8.374a1 1 0 1 0-1.56 1.25l4 5a1 1 0 0 0 1.56 0l4-5a1 1 0 1 0-1.56-1.25L13 11.15Z" clip-rule="evenodd"/>
+                            <path fill-rule="evenodd" d="M9.657 15.874 7.358 13H5a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-2.358l-2.3 2.874a3 3 0 0 1-4.685 0ZM17 16a1 1 0 1 0 0 2h.01a1 1 0 1 0 0-2H17Z" clip-rule="evenodd"/>
                         </svg>
                     </x-button>
-                    {{-- Show Button Action --}}
-                    <x-button wire:click="confirmProjetEdit({{ $projet->id }})"
-                        class="mr-2 bg-orange-500 hover:bg-orange-700">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
-                            <path d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z" />
-                            <path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z" />
-                        </svg>
-                    </x-button>
+                    @endif
                 </td>
+                
             </tr>
             @empty
                 <tr>

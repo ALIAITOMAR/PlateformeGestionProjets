@@ -37,7 +37,7 @@
                     Projet
                 </th>
                 <th scope="col" class="px-6 py-3">
-                    Classe
+                    Classe / Groupe
                 </th>
                 <th scope="col" class="px-6 py-3">
                     Date Echeance
