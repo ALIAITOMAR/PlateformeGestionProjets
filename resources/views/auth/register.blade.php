@@ -1,7 +1,7 @@
 <x-guest-layout>
     <x-authentication-card>
         <x-slot name="logo">
-            <x-authentication-card-logo />
+            <img src="{{url('/logo.jpg')}}" width="250" height="250" alt="Image"/>
         </x-slot>
 
         <x-validation-errors class="mb-4" />
@@ -35,7 +35,7 @@
             </div>
             
             <div class="mt-4">
-                <x-label for="token" value="{{ __('Jeton dinscription') }}" />
+                <x-label for="token" value="{{ __('Jeton inscription') }}" />
                 <x-input id="token" class="block mt-1 w-full" type="text" name="token" :value="old('token')" required autofocus />
             </div>
 

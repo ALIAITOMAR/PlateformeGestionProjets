@@ -158,8 +158,8 @@
 							@endif
 							<td class="border border-gray-400 p-2">{{ $indicateur->libelle }}</td>
 							<td class="border border-gray-400 p-2 text-center">{{ $indicateur->bareme }}</td>
-							<td class="border border-gray-400 p-2 text-center">{{ $state['notesProduit'][$critere->id][$indicateur->id] }}</td>
-							<td class="border border-gray-400 p-2">{{ $state['commentairesProduit'][$critere->id][$indicateur->id] }}</td>
+							<td class="border border-gray-400 p-2 text-center">{{ $state['notesProduit'][$critere->id][$indicateur->id] ?? '' }}</td>
+							<td class="border border-gray-400 p-2">{{ $state['commentairesProduit'][$critere->id][$indicateur->id] ?? '' }}</td>
 							@if($key == 0)
 								</tr>
 							@endif
@@ -182,7 +182,7 @@
 				</tr>
 				<tr>
                     <td class="border border-gray-400 p-2 text-center">{{ $noteProcessus_total }}</td>
-                    <td class="border border-gray-400 p-2">{{ $state['commentaireProcessus'] }}</td>
+                    <td class="border border-gray-400 p-2">{{ $state['commentaireProcessus'] ?? '' }}</td>
                 </tr>
 			</table>
 		</div>
@@ -214,14 +214,23 @@
 							@endif
 						</td>
 						<td class="border border-gray-400 p-2 text-center">
-							@foreach ($notesPropos as $note)
-								{{ $note }}<br>
-							@endforeach
+							@if($notesPropos)
+								@foreach ($notesPropos as $note)
+									{{ $note }}<br>
+								@endforeach
+							@else
+
+							@endif
 						</td>
+						
 						<td class="border border-gray-400 p-2">
+							@if($commentairesPropos)
 							@foreach ($commentairesPropos as $commentaire)
 								{{ $commentaire }}<br>
 							@endforeach
+							@else
+
+							@endif
 						</td>
 					</tr>
 				@endforeach
@@ -241,7 +250,7 @@
 				</tr>
 				<tr>
                     <td class="border border-gray-400 p-2 font-bold text-center">{{ $note_obtenu }}</td>
-                    <td class="border border-gray-400 p-2">{{ $state['appreciation'] }}</td>
+                    <td class="border border-gray-400 p-2">{{ $state['appreciation'] ?? '' }}</td>
                 </tr>
 			</table>
 		</div>

@@ -43,6 +43,7 @@ class ProjetDetails extends Component
 
     public $isSaving = false; 
 
+    public $note_obtenue;
     /**
      * The projet instance.
      *
@@ -70,14 +71,14 @@ class ProjetDetails extends Component
     {
         $this->projetId = $id;
 
-      $this->livrables = auth()->user()->apprenants->livrables()->with('affectation.projet')
+        $this->livrables = auth()->user()->apprenants->livrables()->with('affectation.projet')
         ->whereHas('affectation', function ($query) {
             $query->whereHas('projet', function ($query) {
                 $query->where('id', $this->projetId);
             });
         })
         ->get();
-
+        
         $this->affectation = auth()->user()->apprenants->classe->affectations()
             ->with(['projet', 'livrable' => function ($query) {
                 $query->where('apprenant_id', auth()->user()->apprenants->id)->orderBy('created_at', 'desc')->take(1);
@@ -100,6 +101,11 @@ class ProjetDetails extends Component
             ->whereHas('affectation', function ($query) {
                 $query->whereHas('classe', function ($query) {
                     $query->where('id', Auth::user()->apprenants->classe->id);
+                });
+            })
+            ->whereHas('affectation', function ($query) {
+                $query->whereHas('projet', function ($query) {
+                    $query->where('id', $this->projetId);
                 });
             })
             ->latest()

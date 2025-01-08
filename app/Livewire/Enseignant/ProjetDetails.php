@@ -105,7 +105,13 @@ class ProjetDetails extends Component
 
         $this->user = User::find($userId); 
 
-        $this->livrables = $this->user->apprenants->livrables()->with('affectation.projet')->get();
+        $this->livrables = $this->user->apprenants->livrables()->with('affectation.projet')
+        ->whereHas('affectation', function ($query) {
+            $query->whereHas('projet', function ($query) {
+                $query->where('id', $this->projetId);
+            });
+        })
+        ->get();
 
         $this->affectation = $this->user->apprenants->classe->affectations()
             ->with(['projet', 'livrable' => function ($query) {
@@ -187,9 +193,15 @@ class ProjetDetails extends Component
 
     public function marquerCommeTermine()
     {
+
         $livrable = Livrable::where('apprenant_id', $this->user->apprenants->id)
-            ->orderBy('created_at', 'desc')
-            ->first();
+        ->whereHas('affectation', function ($query) {
+            $query->whereHas('projet', function ($query) {
+                $query->where('id', $this->projetId);
+            });
+        })
+        ->orderBy('created_at', 'desc')
+        ->first();
 
         if ($livrable) {
             $livrable->update([

@@ -217,7 +217,7 @@ class AffectationManager extends Component
         $affectations = auth()->user()->enseignants->affectations()
         ->with(['projet', 'classe'])
         ->orderBy('id', 'ASC')
-        ->paginate(5);
+        ->paginate(10);
 
         $projets = auth()->user()->enseignants->projets;
         $classes = auth()->user()->enseignants->classes;

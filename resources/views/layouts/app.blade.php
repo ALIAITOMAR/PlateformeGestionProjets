@@ -14,6 +14,23 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+        <link rel="stylesheet" href="../assets/vendor/apexcharts/dist/apexcharts.css">
+        <style type="text/css">
+        .apexcharts-tooltip.apexcharts-theme-light {
+            background-color: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+        </style>
+
+        <!-- JS PLUGINS -->
+        <script src="https://preline.co/assets/vendor/preline/dist/index.js?v=2.3.0"></script>
+        <!-- Apexcharts -->
+        <script src="https://preline.co/assets/vendor/lodash/lodash.min.js"></script>
+        <script src="https://preline.co/assets/vendor/apexcharts/dist/apexcharts.min.js"></script>
+
+        <script src="https://preline.co/assets/js/hs-apexcharts-helpers.js"></script>
+
         <!-- Styles -->
         @livewireStyles
     </head>

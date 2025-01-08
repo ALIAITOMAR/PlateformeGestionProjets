@@ -22,6 +22,6 @@ class Role
         }
 
         // Redirect or show unauthorized message if user does not have the required role(s)
-        return redirect()->route('unauthorized');
+        return redirect()->route('dashboard');
     }
 }

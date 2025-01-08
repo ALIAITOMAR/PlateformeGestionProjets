@@ -42,6 +42,8 @@ class EvaluationManager extends Component
     public $apprenants;
     public $projets;
 
+    public $isSaving = false; 
+
     public function goToStep($step)
     {
         $this->currentStep = $step;
@@ -91,7 +93,13 @@ class EvaluationManager extends Component
         {
             Validator::make($this->state, [
                 'notesProduit.*.*' => ['required', 'numeric', 'max_bareme'],
-                'commentairesProduit.*.*' => ['required', 'string', 'max:255'],
+                'commentairesProduit.*.*' => ['nullable', 'string', 'max:255'],
+            ],[
+                'notesProduit.*.*.required' => 'Le champ note est requis.',
+                'notesProduit.*.*.numeric' => 'Le champ note doit être numérique.',
+                'notesProduit.*.*.max_bareme' => 'Les note ne doivent pas dépasser la valeur du barème.',
+                'commentairesProduit.*.*.string' => 'Le champ commentaires doit être une chaîne de caractères.',
+                'commentairesProduit.*.*.max' => 'Le champ commentaires ne doit pas dépasser :max caractères.',
             ])->validate();
         }
 
@@ -99,7 +107,12 @@ class EvaluationManager extends Component
         {
             Validator::make($this->state, [
                 'noteProcessus' => ['required', 'numeric'],
-                'commentaireProcessus' => ['required', 'string', 'max:255'],
+                'commentaireProcessus' => ['nullable', 'string', 'max:255'],
+            ],[
+                'noteProcessus.required' => 'Le champ note est requis.',
+                'noteProcessus.numeric' => 'Le champ note doit être numérique.',
+                'commentaireProcessus.string' => 'Le champ commentaires doit être une chaîne de caractères.',
+                'commentaireProcessus.max' => 'Le champ commentaires ne doit pas dépasser :max caractères.',
             ])->validate();
         }
 
@@ -107,7 +120,13 @@ class EvaluationManager extends Component
         {
             Validator::make($this->state, [
                 'notesPropos.*.*' => ['required', 'numeric'],
-                'commentairesPropos.*.*' => ['required', 'string', 'max:255'],
+                'commentairesPropos.*.*' => ['nullable', 'string', 'max:255'],
+            ],[
+                'notesPropos.*.*.required' => 'Le champ notes est requis.',
+                'notesPropos.*.*.numeric' => 'Le champ notes doit être numérique.',
+                'notesPropos.*.*.max' => 'Le champ notes ne doit pas dépasser :max.',
+                'commentairesPropos.*.*.string' => 'Le champ commentaires doit être une chaîne de caractères.',
+                'commentairesPropos.*.*.max' => 'Le champ commentaires ne doit pas dépasser :max caractères.',
             ])->validate();
         }
 
@@ -115,41 +134,11 @@ class EvaluationManager extends Component
         {
             Validator::make($this->state, [
                 'appreciation' => ['nullable', 'string', 'max:255'],
+            ],[
+                'appreciation.string' => 'Le champ appreciation doit être une chaîne de caractères.',
+                'appreciation.max' => 'Le champ appreciation ne doit pas dépasser :max caractères.',
             ])->validate();
         }
-
-        
-        /*Validator::make($this->state, [
-            'notesProduit.*.*' => ['required', 'numeric', 'max_bareme'],
-            'commentairesProduit.*.*' => ['required', 'string', 'max:255'],
-            'noteProcessus' => ['required', 'numeric'],
-            'commentaireProcessus' => ['required', 'string', 'max:255'],
-            'notesPropos.*.required' => ['required', 'numeric'],
-            'commentairesPropos.*' => ['required', 'string', 'max:255'],
-            'appreciation' => ['required', 'string', 'max:255'],
-
-        ],[
-            'notesProduit.*.*.required' => 'Le champ note est requis.',
-            'notesProduit.*.*.numeric' => 'Le champ note doit être numérique.',
-            'notesProduit.*.*.max_bareme' => 'Les note ne doivent pas dépasser la valeur du barème.',
-            'commentairesProduit.*.*.required' => 'Le champ commentaires est requis.',
-            'commentairesProduit.*.*.string' => 'Le champ commentaires doit être une chaîne de caractères.',
-            'commentairesProduit.*.*.max' => 'Le champ commentaires ne doit pas dépasser :max caractères.',
-            'noteProcessus.required' => 'Le champ note est requis.',
-            'noteProcessus.numeric' => 'Le champ note doit être numérique.',
-            'commentaireProcessus.required' => 'Le champ commentaires est requis.',
-            'commentaireProcessus.string' => 'Le champ commentaires doit être une chaîne de caractères.',
-            'commentaireProcessus.max' => 'Le champ commentaires ne doit pas dépasser :max caractères.',
-            'notesPropos.*.required' => 'Le champ notes est requis.',
-            'notesPropos.*.numeric' => 'Le champ notes doit être numérique.',
-            'notesPropos.*.max' => 'Le champ notes ne doit pas dépasser :max.',
-            'commentairesPropos.*.required' => 'Le champ commentaires est requis.',
-            'commentairesPropos.*.string' => 'Le champ commentaires doit être une chaîne de caractères.',
-            'commentairesPropos.*.max' => 'Le champ commentaires ne doit pas dépasser :max caractères.',
-            'appreciation.required' => 'Le champ appreciation est requis.',
-            'appreciation.string' => 'Le champ appreciation doit être une chaîne de caractères.',
-            'appreciation.max' => 'Le champ appreciation ne doit pas dépasser :max caractères.',
-        ])->validate();*/
         
         $this->currentStep++;
     }
@@ -223,6 +212,10 @@ class EvaluationManager extends Component
 
     public function generatePdf()
     {
+        $this->isSaving = true;
+
+        sleep(3);
+
         $this->noteProduit_total = array_reduce($this->state['notesProduit'], function($carry, $indicateurs) {
             return $carry + array_sum($indicateurs);
         }, 0);
@@ -264,10 +257,20 @@ class EvaluationManager extends Component
     $pdfPath = $directory . '/' . $filename;
     
         Livrable::where('apprenant_id', $this->apprenantId)
+        ->whereHas('affectation', function ($query) {
+            $query->whereHas('projet', function ($query) {
+                $query->where('id', $this->projetId);
+            });
+        })
             ->orderBy('created_at', 'desc')
             ->update([
                 'evaluation_jointe' => $pdfPath,
+                'note_produit' => $this->noteProduit_total,
+                'note_propos' => $this->notePropos_total,
+                'note_processus' => $this->noteProcessus_total,
         ]);
+
+        $this->isSaving = false;
 
         return response()->streamDownload(
             fn () => print($pdfContent),

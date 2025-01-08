@@ -104,4 +104,13 @@ class User extends Authenticatable
         return $this->role === 'enseignant';
     }
     
+    public function getRedirectRoute(): string
+    {
+        return match((int)$this->role) {
+            'admin' => 'admin.dashboard',
+            'enseignant' => 'enseignant.dashboard',
+            'apprenant' => 'apprenant.dashboard',
+            // ...
+        };
+    }
 }

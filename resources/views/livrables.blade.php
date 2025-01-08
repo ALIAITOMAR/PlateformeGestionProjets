@@ -1,22 +1,13 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Livrables') }}
-        </h2>
-    </x-slot>
-
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-
-                @if(auth()->user()->hasRole('enseignant'))
-                    <livewire:enseignant.livrable-manager />
-                @endif
-                @if(auth()->user()->hasRole('apprenant'))
-                    <livewire:apprenant.livrable-manager />
-                @endif
-                
-            </div>
+    <div class="w-full">
+        <div class="p-4 sm:p-6 space-y-4 sm:space-y-6">
+            @if(auth()->user()->hasRole('enseignant'))
+                <livewire:enseignant.livrable-manager />
+            @endif
+            @if(auth()->user()->hasRole('apprenant'))
+                <livewire:apprenant.livrable-manager />
+            @endif
         </div>
     </div>
 </x-app-layout>
+

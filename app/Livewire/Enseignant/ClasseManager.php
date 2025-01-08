@@ -211,7 +211,7 @@ class ClasseManager extends Component
         $classes = auth()->user()->enseignants->classes()
         ->where('nom', 'like', '%'.$this->search.'%')
         ->orderBy('id','ASC')
-        ->paginate(5);
+        ->paginate(10);
 
         return view('livewire.enseignant.classe-manager', ['classes' => $classes]);
     }

@@ -17,6 +17,16 @@ Route::middleware([
 // Route group for admin
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified', 'role:admin'])->prefix('admin')->group(function () {
     
+    Route::middleware([
+        'auth:sanctum',
+        config('jetstream.auth_session'),
+        'verified',
+    ])->group(function () {
+        Route::get('/dashboard', function () {
+            return view('dashboard');
+        })->name('admin.dashboard');
+    });
+    
     Route::get('/invitations', function () {
         return view('invitations');
     })->name('admin.invitations');
@@ -30,6 +40,16 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
 // Route group for enseignant
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified', 'role:enseignant', 'enseignant.onboarding.completed'])->prefix('enseignant')->group(function () {
     
+    Route::middleware([
+        'auth:sanctum',
+        config('jetstream.auth_session'),
+        'verified', 'enseignant.onboarding.completed',
+    ])->group(function () {
+        Route::get('/dashboard', function () {
+            return view('dashboard');
+        })->name('enseignant.dashboard');
+    });
+
     Route::get('/projets', function () {
         return view('projets');
     })->name('enseignant.projets');
@@ -67,6 +87,16 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
 // Route group for apprenant
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified', 'role:apprenant'])->prefix('apprenant')->group(function () {
     
+    Route::middleware([
+        'auth:sanctum',
+        config('jetstream.auth_session'),
+        'verified',
+    ])->group(function () {
+        Route::get('/dashboard', function () {
+            return view('dashboard');
+        })->name('apprenant.dashboard');
+    });
+
     Route::get('/projets', function () {
         return view('projets');
     })->name('apprenant.projets');

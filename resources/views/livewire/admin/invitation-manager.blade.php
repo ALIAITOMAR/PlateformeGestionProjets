@@ -1,5 +1,4 @@
-<div class="p-6 relative overflow-x-auto shadow-md sm:rounded-lg">
-
+<div>
     @if (session()->has('message'))
     <div id="toast-bottom-left" class="fixed flex items-center w-full max-w-xs p-4 space-x-4 text-gray-500 bg-white divide-x rtl:divide-x-reverse divide-gray-200 rounded-lg shadow bottom-5 left-5 dark:text-gray-400 dark:divide-gray-700 space-x dark:bg-gray-800" role="alert">
     <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg dark:bg-green-800 dark:text-green-200">
@@ -18,137 +17,210 @@
     </div>
     @endif
 
-    <div class="flex items-center justify-between flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-4 bg-white dark:bg-gray-900">
-            {{-- Add Button Action --}}
-            <div class="relative">
-                <x-button wire:click="confirmInvitationAdd" class="bg-indigo-700 hover:bg-indigo-900">
+    <ol class="flex items-center whitespace-nowrap">
+        <li class="inline-flex items-center">
+            <a class="flex items-center text-sm text-gray-500 hover:text-blue-600 focus:outline-none focus:text-blue-600 dark:text-neutral-500 dark:hover:text-blue-500 dark:focus:text-blue-500" href="#">
+            <svg class="flex-shrink-0 me-3 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+                Tableau de bord
+            </a>
+            <svg class="flex-shrink-0 mx-2 overflow-visible size-4 text-gray-400 dark:text-neutral-600" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m9 18 6-6-6-6"></path>
+            </svg>
+        </li>
+        <li class="inline-flex items-center text-sm font-semibold text-gray-800 truncate dark:text-neutral-200" aria-current="page">
+            Invitations
+        </li>
+    </ol>
+    
+    <!-- Card -->
+    <div class="mt-5 flex flex-col">
+      <div class="-m-1.5 overflow-x-auto">
+        <div class="p-1.5 min-w-full inline-block align-middle">
+          <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden dark:bg-neutral-800 dark:border-neutral-700">
+            <!-- Header -->
+            <div class="px-6 py-4 grid gap-3 md:flex md:justify-between md:items-center border-b border-gray-200 dark:border-neutral-700">
+              <div>
+              <label for="table-search" class="sr-only">Recherche</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
+                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                        </svg>
+                    </div>
+                    <input type="search" wire:model.live="search" id="table-search-apprenants" class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Rechercher des apprenants">
+                </div>
+              </div>
+              <div>
+                <div class="inline-flex gap-x-2">
+                  <a wire:click="confirmInvitationAdd" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none" href="#">
+                    <svg class="flex-shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
                     Ajouter Invitation
-                </x-button>
+                  </a>
+                </div>
+              </div>
             </div>
-        <label for="table-search" class="sr-only">Search</label>
-        <div class="relative">
-            <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
-                <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-                </svg>
-            </div>
-            <input type="search" wire:model.live="search" id="table-search-invitations" class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Rechercher des invitations">
-        </div>
-    </div>
-    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-            <tr>
-                <th scope="col" class="px-6 py-3">
-                    ID
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Email
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Token
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Expire
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Statut
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Actions
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-        @forelse ($invitations as $invitation)
-            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+            <!-- End Header -->
+
+            <!-- Table -->
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-neutral-700">
+              <thead class="bg-gray-50 dark:bg-neutral-800">
+                <tr>
+
+                  <th scope="col" class="ps-6 py-3 text-start">
+                    <div class="flex items-center gap-x-2">
+                      <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-neutral-200">
+                        ID
+                      </span>
+                    </div>
+                  </th>
+
+                  <th scope="col" class="px-6 py-3 text-start">
+                    <div class="flex items-center gap-x-2">
+                      <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-neutral-200">
+                        Email
+                      </span>
+                    </div>
+                  </th>
+
+                  <th scope="col" class="px-6 py-3 text-start">
+                    <div class="flex items-center gap-x-2">
+                      <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-neutral-200">
+                        Token
+                      </span>
+                    </div>
+                  </th>
+
+                  <th scope="col" class="px-6 py-3 text-start">
+                    <div class="flex items-center gap-x-2">
+                      <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-neutral-200">
+                        Expire
+                      </span>
+                    </div>
+                  </th>
+
+                  <th scope="col" class="px-6 py-3 text-start">
+                    <div class="flex items-center gap-x-2">
+                      <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-neutral-200">
+                        Statut
+                      </span>
+                    </div>
+                  </th>
+
+                  <th scope="col" class="px-6 py-3 text-start">
+                    <div class="flex items-center gap-x-2">
+                      <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-neutral-200">
+                        Actions
+                      </span>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
                 
-                <td class="px-6 py-4">
-                    {{ $invitation->id }}
-                </td>
+               
+              <tbody class="divide-y divide-gray-200 dark:divide-neutral-700">
+                @forelse ($invitations as $invitation)
+                <tr>
+                  <td class="size-px whitespace-nowrap">
+                    <div class="px-6 py-3">
+                      <span class="text-sm text-gray-500 dark:text-neutral-500">{{ $invitation->id }}</span>
+                    </div>
+                  </td>
 
-                <td class="px-6 py-4">
-                    {{ $invitation->email }}
-                </td>
+                  <td class="size-px whitespace-nowrap">
+                    <div class="px-6 py-3">
+                      <span class="text-sm text-gray-500 dark:text-neutral-500">{{ $invitation->email }}</span>
+                    </div>
+                  </td>
 
-                <td class="px-6 py-4">
-                    <div x-data="{ copied: false }">
+                  <td class="size-px whitespace-nowrap">
+                    <div class="px-6 py-3">
+                      <div x-data="{ copied: false }">
                         <button @click="navigator.clipboard.writeText('{{ $invitation->token }}').then(() => copied = true)" class="py-2 px-3 inline-flex items-center gap-x-2 text-xs rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800">
                             Copier la clé
                         <svg class="flex-shrink-0 size-4 text-gray-400 dark:text-neutral-600" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>
                         </button>
                         <span x-show="copied" style="color: green;">Copié!</span>
                     </div>
-                </td>
-
-                <td class="px-6 py-4">
-                    {{ $invitation->expires_at->format('d/m/Y H:i:s') }}
-                </td>
-
-                <td class="px-6 py-4">
-                <div class="flex flex-col gap-y-2">
-                    <div>
-                        @if($invitation->statut == 'Actif')
-                        <span class="py-1 px-2 inline-flex items-center gap-x-1 text-xs font-medium bg-teal-100 text-teal-800 rounded-full dark:bg-teal-500/10 dark:text-teal-500">
-                            <svg class="flex-shrink-0 size-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
-                            <path d="m9 12 2 2 4-4"></path>
-                            </svg>
-                            {{ $invitation->statut }}
-                        </span>
-                        @endif
-
-                        @if($invitation->statut == 'Utilisé')
-                        <span class="py-1 px-1.5 inline-flex items-center gap-x-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-full dark:bg-gray-500/10 dark:text-gray-500">
-                            <svg class="flex-shrink-0 size-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="12" x2="12" y1="2" y2="6"></line>
-                                <line x1="12" x2="12" y1="18" y2="22"></line>
-                                <line x1="4.93" x2="7.76" y1="4.93" y2="7.76"></line>
-                                <line x1="16.24" x2="19.07" y1="16.24" y2="19.07"></line>
-                                <line x1="2" x2="6" y1="12" y2="12"></line>
-                                <line x1="18" x2="22" y1="12" y2="12"></line>
-                                <line x1="4.93" x2="7.76" y1="19.07" y2="16.24"></line>
-                                <line x1="16.24" x2="19.07" y1="7.76" y2="4.93"></line>
-                            </svg>
-                            {{ $invitation->statut }}
-                        </span>
-                        @endif
-
-                        @if($invitation->statut == 'Expiré')
-                        <span class="py-1 px-1.5 inline-flex items-center gap-x-1 text-xs font-medium bg-red-100 text-red-800 rounded-full dark:bg-red-500/10 dark:text-red-500">
-                            <svg class="flex-shrink-0 size-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
-                            <path d="M12 9v4"></path>
-                            <path d="M12 17h.01"></path>
-                            </svg>
-                            {{ $invitation->statut }}
-                        </span>
-                        @endif
                     </div>
+                  </td>
+
+                  <td class="size-px whitespace-nowrap">
+                    <div class="px-6 py-3">
+                      <span class="text-sm text-gray-500 dark:text-neutral-500">{{ $invitation->expires_at->format('d/m/Y H:i:s') }}</span>
                     </div>
-                </td>
-                
-                <td class="px-6 py-4">
-                    {{-- Delete Button Action --}}
-                    <x-danger-button class="px-2" wire:click="confirmInvitationDeletion({{ $invitation->id }})"
-                        wire:loading.attr="disabled">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
-                            <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" />
+                  </td>
+
+                  <td class="size-px whitespace-nowrap">
+                    <div class="px-6 py-3">
+                      @if($invitation->statut == 'Actif')
+                        <span class="py-1 px-1.5 inline-flex items-center gap-x-1 text-xs font-medium bg-teal-100 text-teal-800 rounded-full dark:bg-teal-500/10 dark:text-teal-500">
+                        <svg class="size-2.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                          <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
                         </svg>
-                    </x-danger-button>
-                </td>
-            </tr>
-            @empty
-                <tr>
-                    <td colspan="9">{{ __('Aucun enregistrement trouvé') }}</td>
+                        {{ $invitation->statut }}
+                      </span>
+                      @endif
+                      @if($invitation->statut == 'Utilisé')
+                      <span class="py-1 px-1.5 inline-flex items-center gap-x-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full dark:bg-yellow-500/10 dark:text-yellow-500">
+                            <svg class="size-2.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                            </svg>
+                            {{ $invitation->statut }}
+                        </span>
+                      @endif
+                      @if($invitation->statut == 'Expiré')
+                        <span class="py-1 px-1.5 inline-flex items-center gap-x-1 text-xs font-medium bg-red-100 text-red-800 rounded-full dark:bg-red-500/10 dark:text-red-500">
+                          <svg class="size-2.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                          </svg>
+                          {{ $invitation->statut }}
+                        </span>
+                      @endif
+                    </div>
+                  </td>
+                 
+                  <td class="size-px whitespace-nowrap">
+                    <div class="px-6 py-1.5">
+                      {{-- Delete Button Action --}}
+                      <x-danger-button class="px-2" wire:click="confirmInvitationDeletion({{ $invitation->id }})"
+                          wire:loading.attr="disabled">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                              <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" />
+                          </svg>
+                      </x-danger-button>
+                    </div>
+                  </td>
                 </tr>
-            @endforelse
-        </tbody>
-    </table>
-    
-    {{-- Footer Section --}}
-    <div class="mt-4">
-    {{ $invitations->links() }}
+                @empty
+                <tr>
+                    <td colspan="9" class="text-center size-px whitespace-nowrap">
+                        <div class="px-6 py-3">
+                            <span class="text-sm text-gray-500 dark:text-neutral-500">{{ __('Aucun enregistrement trouvé') }}</span>
+                        </div>
+                    </td>
+                </tr>
+                @endforelse
+              </tbody>
+            </table>
+            <!-- End Table -->
+
+            <!-- Footer -->
+            <div class="px-6 py-4 grid gap-3 border-t border-gray-200 dark:border-neutral-700">
+                <div>
+                    <div class="">
+                        {{ $invitations->links() }}
+                    </div>
+                </div>
+            </div>
+            <!-- End Footer -->
+          </div>
+        </div>
+      </div>
     </div>
+    <!-- End Card -->
 
     {{-- Modal Section --}}
     <x-dialog-modal wire:model="confirmingInvitationAdd">

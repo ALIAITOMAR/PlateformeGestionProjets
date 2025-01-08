@@ -1,4 +1,4 @@
-<div class="p-6 relative overflow-x-auto shadow-md sm:rounded-lg">
+<div>
 
     @if (session()->has('message'))
     <div id="toast-bottom-left" class="fixed flex items-center w-full max-w-xs p-4 space-x-4 text-gray-500 bg-white divide-x rtl:divide-x-reverse divide-gray-200 rounded-lg shadow bottom-5 left-5 dark:text-gray-400 dark:divide-gray-700 space-x dark:bg-gray-800" role="alert">
@@ -114,6 +114,36 @@
                     </span>
                     @endif
                     
+                    </div>
+                    <div class="w-full h-px flex-1 bg-gray-200 group-last:hidden dark:bg-neutral-700"></div>
+                </li>
+
+                <li class="flex items-center gap-x-2 shrink basis-0 flex-1 group">
+                    <div class="min-w-7 min-h-7 inline-flex justify-center items-center text-xs align-middle">
+                    @if ($affectation->projet->questions->contains(function ($question) {
+                        return $question->reponses->isEmpty();
+                    }) && optional($affectation->livrable)->complete)
+                    <span class="size-10 flex justify-center items-center flex-shrink-0 {{ !$affectation->projet->questions->contains(function ($question) { return $question->reponses->isEmpty(); }) ? 'bg-gray-200' : 'bg-yellow-600' }} font-medium text-white rounded-full dark:bg-white dark:text-neutral-800">
+                        <svg class="w-3.5 h-3.5 text-white-600 lg:w-3 lg:h-3 dark:text-white-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                        </svg>
+                    </span>
+                    <span class="ms-2 block text-sm font-medium text-gray-800 dark:text-white">
+                        En attente réponse<br />
+                    </span>
+                    @endif
+                    @if (!$affectation->projet->questions->contains(function ($question) {
+                        return $question->reponses->isEmpty();
+                    }) && optional($affectation->livrable)->complete)
+                    <span class="size-10 flex justify-center items-center flex-shrink-0 {{ !$affectation->projet->questions->contains(function ($question) { return $question->reponses->isEmpty(); }) ? 'bg-gray-200' : 'bg-green-600' }} font-medium text-white rounded-full dark:bg-white dark:text-neutral-800">
+                        <svg class="w-3.5 h-3.5 text-white-600 lg:w-3 lg:h-3 dark:text-white-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"/>
+                        </svg>
+                    </span>
+                    <span class="ms-2 block text-sm font-medium text-gray-800 dark:text-white">
+                        Questions répondues<br />
+                    </span>
+                    @endif
                     </div>
                     <div class="w-full h-px flex-1 bg-gray-200 group-last:hidden dark:bg-neutral-700"></div>
                 </li>

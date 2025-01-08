@@ -286,7 +286,7 @@ class ApprenantManager extends Component
                     ->orWhere('niveau', 'like', '%' . $this->search . '%');
             })
             ->orderBy('id', 'ASC')
-            ->paginate(5);
+            ->paginate(10);
 
         return view('livewire.enseignant.apprenant-manager', ['apprenants' => $apprenants]);
     }

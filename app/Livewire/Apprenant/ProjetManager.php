@@ -147,7 +147,7 @@ class ProjetManager extends Component
                 });
             })
             ->orderBy('id', 'ASC')
-            ->paginate(5);
+            ->paginate(10);
 
         return view('livewire.apprenant.projet-manager', ['affectations' => $affectations]);
     }

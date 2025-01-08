@@ -16,6 +16,8 @@ class EnseignantOnboarding extends Component
      * @var array
      */
     public $state = [];
+
+    public $isSaving = false; 
     
     /**
      * Mount the component.
@@ -31,6 +33,8 @@ class EnseignantOnboarding extends Component
 
     public function submit()
     {
+        $this->isSaving = true; 
+
         sleep(3);
 
         Validator::make($this->state, [
@@ -55,7 +59,9 @@ class EnseignantOnboarding extends Component
             'tel' => $this->state['tel'],
         ]);
 
-        return redirect()->route('dashboard');
+        $this->isSaving = false; 
+
+        return redirect()->route('enseignant.dashboard');
     }
 
     public function render()

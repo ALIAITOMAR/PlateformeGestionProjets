@@ -197,7 +197,7 @@ class LivrableManager extends Component
         })
         ->latest('created_at')
         ->paginate(10)
-        ->unique('apprenant_id');
+        ->unique('affectation_id');
 
         return view('livewire.enseignant.livrable-manager', ['livrables' => $livrables]);
     }

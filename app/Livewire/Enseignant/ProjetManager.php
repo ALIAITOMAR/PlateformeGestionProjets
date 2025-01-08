@@ -203,7 +203,7 @@ class ProjetManager extends Component
             'titre' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string', 'max:255'],
             'module' => ['required', 'string', 'max:255'],
-            'competence' => ['required', 'string', 'max:255', 'regex:/^[\w\s,]+$/'],
+            'competence' => ['required', 'string', 'max:255'],
             'taches.*.titre' => ['required', 'string', 'max:255'],
             'taches.*.description' => ['required', 'string', 'max:255'],
             'criteres.*.libelle' => ['required', 'string', 'max:255'],
@@ -224,7 +224,6 @@ class ProjetManager extends Component
             'competence.required' => 'La compétence est requise.',
             'competence.string' => 'La compétence doit être une chaîne de caractères.',
             'competence.max' => 'La compétence ne doit pas dépasser :max caractères.',
-            'competence.regex' => 'La compétence doit être au format correct.',
             'taches.*.titre.required' => 'Le titre de la tâche est requis.',
             'taches.*.titre.string' => 'Le titre de la tâche doit être une chaîne de caractères.',
             'taches.*.titre.max' => 'Le titre de la tâche ne doit pas dépasser :max caractères.',
@@ -277,10 +276,25 @@ class ProjetManager extends Component
                 return $critere['indicateurs'];
             })->all();
 
-            $projet->criteres()->createMany($this->state['criteres']);
+            $critereIds = collect($this->state['criteres'])->pluck('id')->filter()->toArray();
+            $projet->criteres()->whereNotIn('id', $critereIds)->delete();
 
-            $projet->criteres()->each(function ($critere) use ($indicateurs) {
-                $critere->indicateurs()->createMany($indicateurs);
+            collect($this->state['criteres'])->each(function ($critereData) use ($projet) {
+                $critere = $projet->criteres()->updateOrCreate(['id' => $critereData['id'] ?? null], [
+                    'libelle' => $critereData['libelle'],
+                ]);
+
+                if (isset($critereData['indicateurs'])) {
+                    $indicateurIds = collect($critereData['indicateurs'])->pluck('id')->filter()->toArray();
+                    $critere->indicateurs()->whereNotIn('id', $indicateurIds)->delete();
+
+                    collect($critereData['indicateurs'])->each(function ($indicateur) use ($critere) {
+                        $critere->indicateurs()->updateOrCreate(['id' => $indicateur['id'] ?? null], [
+                            'libelle' => $indicateur['libelle'],
+                            'bareme' => $indicateur['bareme'],
+                        ]);
+                    });
+                }
             });
 
             DB::commit();
@@ -349,7 +363,7 @@ class ProjetManager extends Component
             'titre' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string', 'max:255'],
             'module' => ['required', 'string', 'max:255'],
-            'competence' => ['required', 'string', 'regex:/^[\w\s,]+$/'],
+            'competence' => ['required', 'string', 'max:255'],
             'taches.*.titre' => ['required', 'string', 'max:255'],
             'taches.*.description' => ['required', 'string', 'max:255'],
             'criteres.*.libelle' => ['required', 'string', 'max:255'],
@@ -370,7 +384,6 @@ class ProjetManager extends Component
             'competence.required' => 'La compétence est requise.',
             'competence.string' => 'La compétence doit être une chaîne de caractères.',
             'competence.max' => 'La compétence ne doit pas dépasser :max caractères.',
-            'competence.regex' => 'La compétence doit être au format correct.',
             'taches.*.titre.required' => 'Le titre de la tâche est requis.',
             'taches.*.titre.string' => 'Le titre de la tâche doit être une chaîne de caractères.',
             'taches.*.titre.max' => 'Le titre de la tâche ne doit pas dépasser :max caractères.',
@@ -525,7 +538,7 @@ class ProjetManager extends Component
                 ->orWhere('competence', 'like', '%' . $this->search . '%');
         })
         ->orderBy('id', 'ASC')
-        ->paginate(5);
+        ->paginate(10);
 
         return view('livewire.enseignant.projet-manager', ['projets' => $projets]);
     }

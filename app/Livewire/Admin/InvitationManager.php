@@ -228,7 +228,7 @@ class InvitationManager extends Component
         $invitations = Invitation::where('email', 'like', '%'.$this->search.'%')
         ->orWhere('token', 'like', '%' . $this->search . '%')
         ->orderBy('id','ASC')
-        ->paginate(5);
+        ->paginate(10);
 
         return view('livewire.admin.invitation-manager', ['invitations' => $invitations]);
     }
