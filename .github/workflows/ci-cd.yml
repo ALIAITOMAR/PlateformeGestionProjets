@@ -43,5 +43,5 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/plateformegestionprojets:latest
-            ${{ secrets.ACR_LOGIN_SERVER }}/plateformegestionprojets:latest
+            aliao1983/plateformegestionprojets:v1.0.0
+            plateformegestionprojets1.azurecr.io/plateformegestionprojets:v1.0.0
