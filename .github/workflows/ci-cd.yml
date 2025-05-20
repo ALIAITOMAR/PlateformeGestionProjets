@@ -26,22 +26,22 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # # Azure ACR Login
-      # - name: 🔑 S'authentifier a Azure Container Registry (ACR)
-      #   uses: azure/login@v1
-      #   with:
-      #     creds: ${{ secrets.AZURE_CREDENTIALS }}
+      # Azure ACR Login
+      - name: 🔑 S'authentifier a Azure Container Registry (ACR)
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      # - name: 🛠️ S'authentifier a ACR avec Docker
-      #   run: |
-      #     az acr login --name ${{ secrets.ACR_LOGIN_SERVER }}
+      - name: 🛠️ S'authentifier a ACR avec Docker
+        run: |
+          az acr login --name ${{ secrets.ACR_LOGIN_SERVER }}
 
-      # # Build and push to both Docker Hub and ACR
-      # - name: 🛠️ Build et push image de Docker Hub a ACR
-      #   uses: docker/build-push-action@v5
-      #   with:
-      #     context: .
-      #     push: true
-      #     tags: |
-      #       ${{ secrets.DOCKER_USERNAME }}/:latest
-      #       ${{ secrets.ACR_LOGIN_SERVER }}/:latest
+      # Build and push to both Docker Hub and ACR
+      - name: 🛠️ Build et push image de Docker Hub a ACR
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/plateformegestionprojets:latest
+            ${{ secrets.ACR_LOGIN_SERVER }}/plateformegestionprojets:latest
